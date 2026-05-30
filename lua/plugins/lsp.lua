@@ -48,11 +48,24 @@ return {
 
 			vim.lsp.config("pyright", {
 				capabilities = capabilities,
+
+				root_dir = function(bufnr, on_dir)
+					local root = vim.fs.root(bufnr, {
+						"pyproject.toml",
+						"setup.py",
+						"requirements.txt",
+						".git",
+					})
+
+					on_dir(root)
+				end,
+
 				settings = {
 					python = {
-						analysis = {
-							typeCheckingMode = "basic",
+						venvPath = ".",
+						venv = ".venv",
 
+						analysis = {
 							autoSearchPaths = true,
 							useLibraryCodeForTypes = true,
 						},
@@ -131,7 +144,10 @@ return {
 			"nvim-telescope/telescope.nvim",
 		},
 		config = function()
-			require("venv-selector").setup({})
+			require("venv-selector").setup({
+				auto_refresh = true,
+				stay_on_this_version = true,
+			})
 			vim.keymap.set("n", "<leader>vs", "<cmd>VenvSelect<CR>", { desc = "Select Python venv" })
 		end,
 	},

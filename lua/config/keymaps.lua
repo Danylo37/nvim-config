@@ -6,12 +6,6 @@ vim.keymap.set("n", "<leader>)", "ysiw(", { remap = true, desc = "Surround word 
 vim.keymap.set("n", "<leader>]", "ysiw[", { remap = true, desc = "Surround word with []" })
 vim.keymap.set("n", "<leader>}", "ysiw{", { remap = true, desc = "Surround word with {}" })
 
-vim.keymap.set("n", "<leader>ji", "<cmd>MoltenInit<CR>", { desc = "Jupyter Init" })
-vim.keymap.set("n", "<leader>jr", "<cmd>MoltenEvaluateOperator<CR>", { desc = "Run Cell" })
-vim.keymap.set("v", "<leader>jr", "<cmd>MoltenEvaluateVisual<CR>", { desc = "Run Selection" })
-vim.keymap.set("n", "<leader>jo", "<cmd>MoltenEnterOutput<CR>", { desc = "Open Output" })
-vim.keymap.set("n", "<leader>jh", "<cmd>MoltenHideOutput<CR>", { desc = "Hide Output" })
-
 vim.g.copilot_no_tab_map = true
 vim.g.copilot_enabled = true
 vim.g.copilot_assume_mapped = true
