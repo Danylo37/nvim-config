@@ -34,3 +34,20 @@ vim.keymap.set("n", "<leader>rpy", function()
 	vim.fn.chansend(vim.b.terminal_job_id, "cd '" .. dir .. "'\n")
 	vim.fn.chansend(vim.b.terminal_job_id, "python '" .. file .. "'\n")
 end, { desc = "Run current python file" })
+
+vim.keymap.set("n", "<S-l>", "<cmd>BufferLineCycleNext<CR>", {
+	desc = "Next buffer",
+})
+
+vim.keymap.set("n", "<S-h>", "<cmd>BufferLineCyclePrev<CR>", {
+	desc = "Previous buffer",
+})
+
+vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>", {
+	desc = "Close buffer",
+})
+
+vim.keymap.set("n", "<leader>R", function()
+	vim.cmd("silent! wa")
+	vim.cmd("restart")
+end, { desc = "Restart Neovim" })
