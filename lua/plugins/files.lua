@@ -24,8 +24,52 @@ return {
 					width = 30,
 				},
 			})
+			require("neo-tree").setup({
+				close_if_last_window = false,
+				enable_git_status = true,
+				enable_diagnostics = true,
 
-			vim.keymap.set("n", "<leader>e", "<cmd>Neotree toggle<CR>", { desc = "Toggle file tree" })
+				filesystem = {
+					follow_current_file = {
+						enabled = true,
+						leave_dirs_open = false,
+					},
+
+					filtered_items = {
+						visible = false,
+						hide_dotfiles = false,
+						hide_gitignored = false,
+					},
+				},
+
+				window = {
+					position = "left",
+					width = 30,
+				},
+			})
+			local function project_root()
+				local file = vim.api.nvim_buf_get_name(0)
+				local config = vim.fn.stdpath("config")
+
+				if vim.startswith(file, config) then
+					return config
+				end
+
+				return vim.fs.root(file, {
+					".git",
+					"pyproject.toml",
+					"package.json",
+					"Cargo.toml",
+				}) or vim.fn.getcwd()
+			end
+
+			vim.keymap.set("n", "<leader>e", function()
+				require("neo-tree.command").execute({
+					toggle = true,
+					reveal = true,
+					dir = project_root(),
+				})
+			end, { desc = "Toggle file tree" })
 			vim.keymap.set("n", "<leader>fe", "<cmd>Neotree focus<CR>", { desc = "Focus file tree" })
 		end,
 	},

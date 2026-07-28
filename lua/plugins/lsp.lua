@@ -16,6 +16,7 @@ return {
 				"lua_ls",
 				"html",
 				"cssls",
+				"sqls",
 			},
 		},
 	},
@@ -91,12 +92,15 @@ return {
 				},
 			})
 
+			vim.lsp.config("sqls", { capabilities = capabilities })
+
 			vim.lsp.enable({
 				"pyright",
 				"ts_ls",
 				"html",
 				"cssls",
 				"lua_ls",
+        "sqls",
 			})
 
 			vim.keymap.set("n", "gd", "<cmd>Lspsaga goto_definition<CR>")

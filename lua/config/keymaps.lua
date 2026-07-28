@@ -21,3 +21,16 @@ vim.keymap.set("i", "<C-l>", 'copilot#Accept("<CR>")', {
 	expr = true,
 	replace_keycodes = false,
 })
+
+vim.keymap.set("n", "<leader>rpy", function()
+	vim.cmd("w")
+
+	local dir = vim.fn.expand("%:p:h")
+	local file = vim.fn.expand("%:t")
+
+	vim.cmd("botright split")
+	vim.cmd("terminal")
+
+	vim.fn.chansend(vim.b.terminal_job_id, "cd '" .. dir .. "'\n")
+	vim.fn.chansend(vim.b.terminal_job_id, "python '" .. file .. "'\n")
+end, { desc = "Run current python file" })

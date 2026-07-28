@@ -49,18 +49,23 @@ return {
 			require("conform").setup({
 				formatters_by_ft = {
 					lua = { "stylua" },
-					python = { "black" },
+
+					python = { "ruff_format", "black" },
+
 					javascript = { "prettier" },
+					javascriptreact = { "prettier" },
+
 					typescript = { "prettier" },
+					typescriptreact = { "prettier" },
+
 					html = { "prettier" },
 					css = { "prettier" },
+
 					json = { "prettier" },
 					yaml = { "prettier" },
 					markdown = { "prettier" },
-				},
-				format_on_save = {
-					lsp_format = "fallback",
-					timeout_ms = 500,
+
+					sql = { "sql_formatter" },
 				},
 			})
 
