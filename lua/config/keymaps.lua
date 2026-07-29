@@ -17,7 +17,7 @@ vim.keymap.set("n", "<leader>ut", function()
 	})
 end, { desc = "Choose Theme" })
 
-vim.keymap.set("i", "<C-l>", 'copilot#Accept("<CR>")', {
+vim.keymap.set("i", "<C-y>", 'copilot#Accept("<CR>")', {
 	expr = true,
 	replace_keycodes = false,
 })
@@ -51,3 +51,47 @@ vim.keymap.set("n", "<leader>R", function()
 	vim.cmd("silent! wa")
 	vim.cmd("restart")
 end, { desc = "Restart Neovim" })
+
+-- Window navigation
+vim.keymap.set("n", "<C-h>", "<C-w>h", {
+	desc = "Go to left window",
+})
+
+vim.keymap.set("n", "<C-j>", "<C-w>j", {
+	desc = "Go to lower window",
+})
+
+vim.keymap.set("n", "<C-k>", "<C-w>k", {
+	desc = "Go to upper window",
+})
+
+vim.keymap.set("n", "<C-l>", "<C-w>l", {
+	desc = "Go to right window",
+})
+
+-- Resize windows
+vim.keymap.set("n", "<A-h>", "<cmd>vertical resize -2<CR>", {
+	desc = "Decrease window width",
+})
+
+vim.keymap.set("n", "<A-l>", "<cmd>vertical resize +2<CR>", {
+	desc = "Increase window width",
+})
+
+vim.keymap.set("n", "<A-j>", "<cmd>resize -2<CR>", {
+	desc = "Decrease window height",
+})
+
+vim.keymap.set("n", "<A-k>", "<cmd>resize +2<CR>", {
+	desc = "Increase window height",
+})
+
+-- Terminal mode
+vim.keymap.set("t", "<C-q>", [[<C-\><C-n>]], {
+	desc = "Exit terminal mode",
+})
+
+-- LSP Saga keymaps
+vim.keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", {
+	desc = "Code action",
+})

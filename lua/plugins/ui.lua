@@ -105,4 +105,27 @@ return {
 			})
 		end,
 	},
+
+	{
+		"petertriho/nvim-scrollbar",
+		event = "VeryLazy",
+		config = function()
+			require("scrollbar").setup({
+				handle = {
+					text = " ",
+				},
+			})
+
+			require("scrollbar.handlers.gitsigns").setup()
+			require("scrollbar.handlers.diagnostic").setup()
+		end,
+	},
+
+	{
+		"kevinhwang91/nvim-hlslens",
+		event = "VeryLazy",
+		config = function()
+			require("hlslens").setup()
+		end,
+	},
 }
