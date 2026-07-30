@@ -105,11 +105,11 @@ vim.keymap.set("n", "<leader>cf", "<cmd>ClaudeCodeFocus<CR>", {
 	desc = "Focus Claude",
 })
 
-vim.keymap.set("v", "<leader>cs", "<cmd>ClaudeCodeSend<CR>", {
+vim.keymap.set("v", "<leader>cc", "<cmd>ClaudeCodeSend<CR>", {
 	desc = "Send selection to Claude",
 })
 
-vim.keymap.set("n", "<leader>ca", "<cmd>ClaudeCodeAdd %<CR>", {
+vim.keymap.set("n", "<leader>cA", "<cmd>ClaudeCodeAdd %<CR>", {
 	desc = "Add current file to Claude",
 })
 

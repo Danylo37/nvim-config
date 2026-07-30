@@ -9,7 +9,11 @@ return {
 			"folke/snacks.nvim",
 		},
 		config = function()
-			require("claudecode").setup()
+			require("claudecode").setup({
+				terminal = {
+					git_repo_cwd = true,
+				},
+			})
 		end,
 	},
 }
