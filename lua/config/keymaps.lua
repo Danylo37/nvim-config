@@ -95,3 +95,24 @@ vim.keymap.set("t", "<C-q>", [[<C-\><C-n>]], {
 vim.keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", {
 	desc = "Code action",
 })
+
+-- Claude Code keymaps
+vim.keymap.set("n", "<leader>cc", "<cmd>ClaudeCode<CR>", {
+	desc = "Claude Code",
+})
+
+vim.keymap.set("n", "<leader>cf", "<cmd>ClaudeCodeFocus<CR>", {
+	desc = "Focus Claude",
+})
+
+vim.keymap.set("v", "<leader>cs", "<cmd>ClaudeCodeSend<CR>", {
+	desc = "Send selection to Claude",
+})
+
+vim.keymap.set("n", "<leader>ca", "<cmd>ClaudeCodeAdd %<CR>", {
+	desc = "Add current file to Claude",
+})
+
+vim.keymap.set("n", "<leader>cm", "<cmd>ClaudeCodeSelectModel<CR>", {
+	desc = "Select Claude model",
+})
