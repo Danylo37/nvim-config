@@ -11,7 +11,7 @@ return {
 		dependencies = { "williamboman/mason.nvim" },
 		opts = {
 			ensure_installed = {
-				"pyright",
+				"basedpyright",
 				"ts_ls",
 				"lua_ls",
 				"html",
@@ -47,7 +47,7 @@ return {
 		config = function()
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-			vim.lsp.config("pyright", {
+			vim.lsp.config("basedpyright", {
 				capabilities = capabilities,
 
 				root_dir = function(bufnr, on_dir)
@@ -65,10 +65,14 @@ return {
 					python = {
 						venvPath = ".",
 						venv = ".venv",
+					},
 
+					basedpyright = {
 						analysis = {
+							typeCheckingMode = "standard",
 							autoSearchPaths = true,
 							useLibraryCodeForTypes = true,
+							autoImportCompletions = true,
 						},
 					},
 				},
@@ -86,7 +90,7 @@ return {
 				settings = {
 					Lua = {
 						diagnostics = {
-							globals = { "vim" },
+							globals = { "vim", "Snacks" },
 						},
 					},
 				},
@@ -95,7 +99,7 @@ return {
 			vim.lsp.config("sqls", { capabilities = capabilities })
 
 			vim.lsp.enable({
-				"pyright",
+				"basedpyright",
 				"ts_ls",
 				"html",
 				"cssls",

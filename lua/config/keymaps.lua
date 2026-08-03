@@ -43,9 +43,9 @@ vim.keymap.set("n", "<S-h>", "<cmd>BufferLineCyclePrev<CR>", {
 	desc = "Previous buffer",
 })
 
-vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>", {
-	desc = "Close buffer",
-})
+vim.keymap.set("n", "<leader>bd", function()
+	require("snacks").bufdelete()
+end, { desc = "Close buffer" })
 
 vim.keymap.set("n", "<leader>R", function()
 	vim.cmd("silent! wa")
