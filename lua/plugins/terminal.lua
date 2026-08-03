@@ -28,6 +28,15 @@ return {
 				local dir = vim.fn.fnameescape(project_root())
 				vim.cmd("ToggleTerm direction=float dir=" .. dir)
 			end, { desc = "Floating terminal" })
+
+			for i = 1, 9 do
+				vim.keymap.set("n", "<leader>t" .. i, function()
+					local dir = vim.fn.fnameescape(project_root())
+					vim.cmd(i .. "ToggleTerm direction=horizontal dir=" .. dir)
+				end, { desc = "Terminal " .. i })
+			end
+
+			vim.keymap.set("n", "<leader>ts", "<cmd>TermSelect<cr>", { desc = "Select terminal" })
 		end,
 	},
 }

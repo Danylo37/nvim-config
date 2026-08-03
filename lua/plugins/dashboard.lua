@@ -1,3 +1,40 @@
+local project_markers = { ".git", ".venv", "venv" }
+
+local function has_marker(dir)
+	for _, marker in ipairs(project_markers) do
+		if (vim.uv or vim.loop).fs_stat(dir .. "/" .. marker) then
+			return true
+		end
+	end
+	return false
+end
+
+local function project_root(path)
+	path = vim.fs.normalize(path)
+	if has_marker(path) then
+		return path
+	end
+	for dir in vim.fs.parents(path) do
+		if has_marker(dir) then
+			return dir
+		end
+	end
+end
+
+local function recent_project_dirs(limit)
+	local dirs = {}
+	for file in Snacks.dashboard.oldfiles() do
+		local dir = project_root(file)
+		if dir and not vim.tbl_contains(dirs, dir) then
+			table.insert(dirs, dir)
+			if #dirs >= limit then
+				break
+			end
+		end
+	end
+	return dirs
+end
+
 return {
 	{
 		"folke/snacks.nvim",
@@ -12,7 +49,14 @@ return {
 					{ section = "keys", gap = 1, padding = 1 },
 
 					{ icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
-					{ icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
+					{ icon = " ", title = "Projects",
+						section = "projects",
+						indent = 2,
+						padding = 1,
+						dirs = function()
+							return recent_project_dirs(5)
+						end,
+					},
 
 					{ section = "startup" },
 				},
@@ -26,6 +70,12 @@ return {
 							action = ":lua Snacks.dashboard.pick('files')",
 						},
 						{ icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+						{
+							icon = " ",
+							key = "p",
+							desc = "Projects",
+							action = ":lua Snacks.dashboard.pick('projects', { dev = { '~/MyStuff/Projects' }, max_depth = 4, patterns = { '.git', '_darcs', '.hg', '.bzr', '.svn', 'package.json', 'Makefile', '.venv', 'venv' } })",
+						},
 						{
 							icon = " ",
 							key = "g",
