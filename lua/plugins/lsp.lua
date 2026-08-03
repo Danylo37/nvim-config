@@ -43,9 +43,14 @@ return {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			"hrsh7th/cmp-nvim-lsp",
+			"antosha417/nvim-lsp-file-operations",
 		},
 		config = function()
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			local capabilities = vim.tbl_deep_extend(
+				"force",
+				require("cmp_nvim_lsp").default_capabilities(),
+				require("lsp-file-operations").default_capabilities()
+			)
 
 			vim.lsp.config("basedpyright", {
 				capabilities = capabilities,
@@ -114,7 +119,65 @@ return {
 			vim.keymap.set("n", "de", "<cmd>Lspsaga show_line_diagnostics<CR>")
 			vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
 			vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
-			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename)
+			vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { desc = "Rename symbol" })
+			vim.keymap.set("n", "<leader>rN", "<cmd>Lspsaga rename ++project<CR>", { desc = "Rename symbol (project)" })
+
+			-- Track LSP edits per buffer so they can be undone across every touched file at once
+			local edits = {}
+			local apply_text_edits = vim.lsp.util.apply_text_edits
+
+			vim.lsp.util.apply_text_edits = function(text_edits, bufnr, position_encoding, change_annotations)
+				if next(text_edits or {}) and bufnr and bufnr ~= 0 then
+					vim.fn.bufload(bufnr)
+					edits[#edits + 1] = {
+						buf = bufnr,
+						seq = vim.api.nvim_buf_call(bufnr, function()
+							return vim.fn.undotree().seq_cur
+						end),
+						saved = not vim.bo[bufnr].modified,
+						time = vim.uv.hrtime(),
+					}
+				end
+
+				return apply_text_edits(text_edits, bufnr, position_encoding, change_annotations)
+			end
+
+			vim.keymap.set("n", "<leader>ru", function()
+				if #edits == 0 then
+					vim.notify("No LSP edits to undo", vim.log.levels.WARN)
+					return
+				end
+
+				local last = edits[#edits].time
+				local targets = {}
+
+				while #edits > 0 and last - edits[#edits].time < 2e9 do
+					local edit = table.remove(edits)
+					local seen = targets[edit.buf]
+
+					if not seen or edit.seq < seen.seq then
+						targets[edit.buf] = edit
+					end
+				end
+
+				local reverted = {}
+
+				for buf, edit in pairs(targets) do
+					if vim.api.nvim_buf_is_valid(buf) then
+						vim.api.nvim_buf_call(buf, function()
+							vim.cmd("silent undo " .. edit.seq)
+
+							if edit.saved and vim.bo[buf].modified then
+								vim.cmd("silent noautocmd write")
+							end
+						end)
+
+						reverted[#reverted + 1] = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":.")
+					end
+				end
+
+				vim.notify("Reverted " .. #reverted .. " file(s):\n" .. table.concat(reverted, "\n"))
+			end, { desc = "Undo last LSP edit in all files" })
 		end,
 	},
 
