@@ -1,5 +1,38 @@
 return {
 	{
+		-- Pinned to `master` on purpose. The `main` branch is a full rewrite that
+		-- needs Neovim 0.12+ and an external tree-sitter-cli; `master` only needs
+		-- a C compiler and ships pre-generated parsers.
+		"nvim-treesitter/nvim-treesitter",
+		branch = "master",
+		build = ":TSUpdate",
+		event = { "BufReadPost", "BufNewFile" },
+		main = "nvim-treesitter.configs",
+		opts = {
+			ensure_installed = {
+				"python",
+				"lua",
+				"javascript",
+				"typescript",
+				"tsx",
+				"html",
+				"css",
+				"json",
+				"yaml",
+				"sql",
+				"markdown",
+				"markdown_inline",
+				"bash",
+				"vim",
+				"vimdoc",
+				"query",
+			},
+			highlight = { enable = true },
+			indent = { enable = true },
+		},
+	},
+
+	{
 		"tpope/vim-surround",
 	},
 
@@ -21,15 +54,6 @@ return {
 				},
 			},
 		},
-		keys = {
-			{
-				"s",
-				mode = { "n", "x", "o" },
-				function()
-					require("flash").jump()
-				end,
-			},
-		},
 	},
 
 	{
@@ -40,27 +64,8 @@ return {
 			local mc = require("multicursor-nvim")
 			mc.setup()
 
-			local set = vim.keymap.set
-
-			set({ "n", "x" }, "<C-n>", function()
-				mc.matchAddCursor(1)
-			end, { desc = "Add cursor at next match" })
-
-			set({ "n", "x" }, "<C-x>", function()
-				mc.matchSkipCursor(1)
-			end, { desc = "Skip match" })
-
-			set({ "n", "x" }, "<C-Up>", function()
-				mc.lineAddCursor(-1)
-			end, { desc = "Add cursor above" })
-
-			set({ "n", "x" }, "<C-Down>", function()
-				mc.lineAddCursor(1)
-			end, { desc = "Add cursor below" })
-
-			set({ "n", "x" }, "<leader>ma", mc.matchAllAddCursors, { desc = "Add cursor to all matches" })
-			set("n", "<C-LeftMouse>", mc.handleMouse, { desc = "Add cursor with mouse" })
-
+			-- Entry-point mappings live in config/keymaps.lua. This layer can't:
+			-- it is a multicursor API that only binds while cursors are alive.
 			mc.addKeymapLayer(function(layerSet)
 				layerSet({ "n", "x" }, "<C-Left>", mc.prevCursor)
 				layerSet({ "n", "x" }, "<C-Right>", mc.nextCursor)
@@ -89,54 +94,20 @@ return {
 		"MagicDuck/grug-far.nvim",
 		cmd = "GrugFar",
 		opts = { headerMaxWidth = 80 },
-		keys = {
-			{
-				"<leader>sr",
-				function()
-					require("grug-far").open()
-				end,
-				desc = "Search & replace (project)",
-			},
-			{
-				"<leader>sr",
-				mode = "x",
-				function()
-					require("grug-far").with_visual_selection()
-				end,
-				desc = "Search & replace (selection)",
-			},
-			{
-				"<leader>sw",
-				function()
-					require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } })
-				end,
-				desc = "Search & replace word under cursor",
-			},
-			{
-				"<leader>sf",
-				function()
-					require("grug-far").open({ prefills = { paths = vim.fn.expand("%") } })
-				end,
-				desc = "Search & replace (current file)",
-			},
-		},
+	},
+
+	{
+		"ThePrimeagen/harpoon",
+		branch = "harpoon2",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require("harpoon"):setup()
+		end,
 	},
 
 	{
 		"stevearc/conform.nvim",
 		event = { "BufReadPre", "BufNewFile" },
-		keys = {
-			{
-				"<leader>F",
-				function()
-					require("conform").format({
-						async = true,
-						lsp_format = "fallback",
-					})
-				end,
-				desc = "Format buffer",
-			},
-		},
 		cmd = { "ConformInfo", "Format" },
 		config = function()
 			require("conform").setup({
