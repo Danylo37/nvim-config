@@ -34,6 +34,9 @@ return {
 		opts = {
 			auto_refresh = true,
 			stay_on_this_version = true,
+			options = {
+				override_notify = false,
+			},
 		},
 	},
 }
