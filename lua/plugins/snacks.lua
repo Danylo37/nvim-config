@@ -111,14 +111,14 @@ return {
 					{ section = "keys", gap = 1, padding = 1 },
 
 					{
-						icon = " ",
+						icon = " ",
 						title = "Recent Files",
 						section = "recent_files",
 						indent = 2,
 						padding = 1,
 					},
 					{
-						icon = " ",
+						icon = " ",
 						title = "Projects",
 						section = "projects",
 						indent = 2,
@@ -134,22 +134,22 @@ return {
 				preset = {
 					keys = {
 						{
-							icon = " ",
+							icon = " ",
 							key = "f",
 							desc = "Find File",
 							action = function()
 								require("telescope.builtin").find_files()
 							end,
 						},
-						{ icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+						{ icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
 						{
-							icon = " ",
+							icon = " ",
 							key = "p",
 							desc = "Projects",
 							action = pick_project,
 						},
 						{
-							icon = " ",
+							icon = " ",
 							key = "g",
 							desc = "Find Text",
 							action = function()
@@ -157,7 +157,7 @@ return {
 							end,
 						},
 						{
-							icon = " ",
+							icon = " ",
 							key = "r",
 							desc = "Recent Files",
 							action = function()
@@ -165,7 +165,7 @@ return {
 							end,
 						},
 						{
-							icon = " ",
+							icon = " ",
 							key = "c",
 							desc = "Config",
 							action = function()
@@ -180,7 +180,7 @@ return {
 							enabled = package.loaded.lazy ~= nil,
 						},
 						{ icon = "󰈆 ", key = "M", desc = "Mason", action = ":Mason" },
-						{ icon = " ", key = "q", desc = "Quit", action = ":qa" },
+						{ icon = " ", key = "q", desc = "Quit", action = ":qa" },
 					},
 				},
 			},
