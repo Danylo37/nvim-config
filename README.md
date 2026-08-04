@@ -24,6 +24,7 @@ with recent projects, AI assistants (Copilot + Claude Code), and every keymap in
 | [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) | yes | telescope needs it for `live_grep` | `<leader>fg`, `<leader>sr`, and other search stop working |
 | [fd](https://github.com/sharkdp/fd) | yes | fast file search for telescope and venv-selector | venv won't auto-discover itself, `find_files` falls back to something slow or breaks |
 | Node.js + npm | yes | Mason installs `ts_ls`, `prettier`, `sqls`, etc. through it | some LSP servers and formatters won't install |
+| [lazygit](https://github.com/jesseduffield/lazygit) | no | the git TUI behind `<leader>gg` / `<leader>gl` / `<leader>gf` | those three mappings error out; gitsigns still works |
 | [Nerd Font](https://www.nerdfonts.com/) in your terminal | no | icons in the dashboard, file tree, statusline, git/diagnostic signs | icons show as blank boxes or garbled glyphs; nothing else breaks |
 | Python 3 + `pip` | no, but needed for Python projects | `basedpyright`/`ruff`/`black` don't need a system Python themselves, but project venvs do | venv-selector (`<leader>vs`) has nothing to find |
 
@@ -111,6 +112,7 @@ lua/util/
 | Plugin | What it's for |
 |---|---|
 | `gitsigns.nvim` | change markers in the gutter, stage/reset by hunk |
+| `snacks.lazygit` | opens the `lazygit` TUI in a float, themed from the colorscheme |
 
 ### Languages
 | Plugin | What it's for |
@@ -202,6 +204,9 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 | `<leader>gs` | Stage hunk |
 | `<leader>gr` | Reset hunk |
 | `<leader>gp` | Preview hunk |
+| `<leader>gg` | Lazygit (project root) |
+| `<leader>gl` | Lazygit log |
+| `<leader>gf` | Lazygit history for the current file |
 
 ### `<leader>h` — Harpoon
 | Key | Action |

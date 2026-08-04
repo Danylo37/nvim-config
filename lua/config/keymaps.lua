@@ -201,6 +201,18 @@ map("n", "<leader>gs", "<cmd>Gitsigns stage_hunk<CR>", { desc = "Stage hunk" })
 map("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<CR>", { desc = "Reset hunk" })
 map("n", "<leader>gp", "<cmd>Gitsigns preview_hunk<CR>", { desc = "Preview hunk" })
 
+map("n", "<leader>gg", function()
+	require("snacks").lazygit({ cwd = util.root() })
+end, { desc = "Lazygit" })
+
+map("n", "<leader>gl", function()
+	require("snacks").lazygit.log({ cwd = util.root() })
+end, { desc = "Lazygit log" })
+
+map("n", "<leader>gf", function()
+	require("snacks").lazygit.log_file()
+end, { desc = "Lazygit file history" })
+
 -- ---------------------------------------------------------------- harpoon ---
 
 map("n", "<leader>ha", function()

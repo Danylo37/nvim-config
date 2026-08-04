@@ -104,6 +104,9 @@ return {
 			input = { enabled = true },
 			image = { enabled = true },
 
+			-- Opens the lazygit binary in a float, themed from the colorscheme.
+			lazygit = { enabled = true },
+
 			dashboard = {
 				enabled = true,
 
