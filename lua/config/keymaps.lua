@@ -24,6 +24,25 @@ local util = require("util")
 
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 
+-- Search motions run through hlslens so it can draw the "[3/12]" match counter
+-- and feed the search marks on the scrollbar. <Esc> above clears both.
+local function hlslens_jump(key)
+	return function()
+		vim.cmd("normal! " .. vim.v.count1 .. key)
+		require("hlslens").start()
+	end
+end
+
+map("n", "n", hlslens_jump("n"), { desc = "Next search match" })
+map("n", "N", hlslens_jump("N"), { desc = "Previous search match" })
+
+for _, key in ipairs({ "*", "#", "g*", "g#" }) do
+	map("n", key, key .. "<Cmd>lua require('hlslens').start()<CR>", {
+		remap = true,
+		desc = "Search word under cursor",
+	})
+end
+
 map("n", "<leader>R", function()
 	vim.cmd("silent! wa")
 	vim.cmd("restart")

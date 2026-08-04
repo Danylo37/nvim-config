@@ -100,20 +100,18 @@ return {
 	},
 
 	{
+		-- Config only, no `vim.notify` assignment: noice.nvim owns vim.notify and
+		-- uses this as its rendering backend. Setting it here too raced noice's
+		-- own assignment and triggered its "vim.notify has been overwritten"
+		-- warning whenever something notified after both had loaded.
 		"rcarriga/nvim-notify",
-		config = function()
-			local notify = require("notify")
-
-			notify.setup({
-				stages = "fade",
-				timeout = 3000,
-				render = "default",
-				top_down = true,
-				background_colour = "#000000",
-			})
-
-			vim.notify = notify
-		end,
+		opts = {
+			stages = "fade",
+			timeout = 3000,
+			render = "default",
+			top_down = true,
+			background_colour = "#000000",
+		},
 	},
 
 	{
@@ -150,6 +148,9 @@ return {
 	{
 		"petertriho/nvim-scrollbar",
 		event = "VeryLazy",
+		-- The search handler patches hlslens' config rather than setting it up,
+		-- so hlslens has to be configured first. As a dependency it always is.
+		dependencies = { "kevinhwang91/nvim-hlslens" },
 		config = function()
 			require("scrollbar").setup({
 				handle = {
@@ -159,12 +160,14 @@ return {
 
 			require("scrollbar.handlers.gitsigns").setup()
 			require("scrollbar.handlers.diagnostic").setup()
+			require("scrollbar.handlers.search").setup()
 		end,
 	},
 
 	{
+		-- Draws the "[3/12]" counter next to the current match. The n/N/*/#
+		-- mappings that drive it live in config/keymaps.lua.
 		"kevinhwang91/nvim-hlslens",
-		event = "VeryLazy",
 		config = function()
 			require("hlslens").setup()
 		end,

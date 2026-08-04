@@ -26,11 +26,14 @@ return {
 			"nvim-telescope/telescope.nvim",
 		},
 		cmd = { "VenvSelect", "VenvSelectCached" },
-		config = function()
-			require("venv-selector").setup({
-				auto_refresh = true,
-				stay_on_this_version = true,
-			})
-		end,
+		-- Also load on `ft = "python"`: setup() registers the plugin's own
+		-- BufReadPost/FileType autocmds that restore a workspace's cached venv,
+		-- but only once setup() has actually run. Gated on `cmd` alone, that
+		-- never happened until you invoked :VenvSelect yourself.
+		ft = "python",
+		opts = {
+			auto_refresh = true,
+			stay_on_this_version = true,
+		},
 	},
 }

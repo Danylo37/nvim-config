@@ -1,11 +1,5 @@
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "python",
-	callback = function()
-		vim.opt_local.tabstop = 4
-		vim.opt_local.shiftwidth = 4
-		vim.opt_local.softtabstop = 4
-	end,
-})
+-- Only filetypes that need something other than the global 4 spaces are listed.
+-- Python is covered by Neovim's own ftplugin, which applies the PEP8 4/4/4.
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "lua",

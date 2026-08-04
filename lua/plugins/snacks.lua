@@ -33,8 +33,9 @@ local function all_project_dirs()
 
 	for _, dev in ipairs(dev_dirs) do
 		if vim.uv.fs_stat(dev) then
-			-- Depth 2 so a project can sit one grouping folder deep.
-			for name, kind in vim.fs.dir(dev, { depth = 2 }) do
+			-- Depth 4, matching the snacks built-in project picker this replaced,
+			-- so a project can sit several grouping folders deep (e.g. work/client/repo).
+			for name, kind in vim.fs.dir(dev, { depth = 4 }) do
 				if kind == "directory" then
 					local path = vim.fs.normalize(dev .. "/" .. name)
 
