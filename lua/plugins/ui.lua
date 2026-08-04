@@ -14,11 +14,61 @@ return {
 	},
 
 	{
+		"akinsho/bufferline.nvim",
+		version = "*",
+		dependencies = {
+			"nvim-tree/nvim-web-devicons",
+		},
+		config = function()
+			require("bufferline").setup({
+				options = {
+					mode = "buffers",
+
+					diagnostics = "nvim_lsp",
+
+					always_show_bufferline = true,
+					show_buffer_close_icons = false,
+					show_close_icon = false,
+
+					separator_style = "slant",
+
+					-- Ordinals are jumpable via <leader>b1..b9, see config/keymaps.lua
+					numbers = "ordinal",
+
+					offsets = {
+						{
+							filetype = "neo-tree",
+							text = "Explorer",
+							text_align = "center",
+							separator = true,
+						},
+					},
+				},
+			})
+		end,
+	},
+
+	{
 		"folke/which-key.nvim",
 		event = "VeryLazy",
-		config = function()
-			require("which-key").setup({})
-		end,
+		opts = {
+			-- Prefix groups. The mappings themselves all live in config/keymaps.lua.
+			spec = {
+				{ "<leader>a", group = "AI / Claude" },
+				{ "<leader>b", group = "Buffer" },
+				{ "<leader>c", group = "Code" },
+				{ "<leader>f", group = "Find / Files" },
+				{ "<leader>g", group = "Git" },
+				{ "<leader>h", group = "Harpoon" },
+				{ "<leader>m", group = "Multicursor" },
+				{ "<leader>r", group = "Refactor" },
+				{ "<leader>s", group = "Search & Replace" },
+				{ "<leader>t", group = "Terminal" },
+				{ "<leader>u", group = "UI toggles" },
+				{ "<leader>v", group = "Venv" },
+				{ "<leader>x", group = "Diagnostics" },
+			},
+		},
 	},
 
 	{
@@ -38,32 +88,15 @@ return {
 
 	{
 		"catgoose/nvim-colorizer.lua",
+		cmd = { "ColorizerToggle", "ColorizerAttachToBuffer" },
+		event = { "BufReadPost", "BufNewFile" },
 		config = function()
 			require("colorizer").setup({
 				user_default_options = {
 					mode = "background",
 				},
 			})
-
-			vim.keymap.set("n", "<leader>uc", "<cmd>ColorizerToggle<CR>")
 		end,
-	},
-
-	{
-		"folke/snacks.nvim",
-		opts = {
-			picker = {
-				enabled = true,
-			},
-
-			input = {
-				enabled = true,
-			},
-
-			image = {
-				enabled = true,
-			},
-		},
 	},
 
 	{

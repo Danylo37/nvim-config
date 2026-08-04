@@ -1,6 +1,13 @@
 return {
 	{
 		"github/copilot.vim",
+		init = function()
+			-- Tab is left alone; suggestions are accepted with <C-y>.
+			vim.g.copilot_no_tab_map = true
+			vim.g.copilot_enabled = true
+			vim.g.copilot_assume_mapped = true
+			vim.g.copilot_tab_fallback = ""
+		end,
 	},
 
 	{
@@ -8,12 +15,17 @@ return {
 		dependencies = {
 			"folke/snacks.nvim",
 		},
-		config = function()
-			require("claudecode").setup({
-				terminal = {
-					git_repo_cwd = true,
-				},
-			})
-		end,
+		cmd = {
+			"ClaudeCode",
+			"ClaudeCodeFocus",
+			"ClaudeCodeSend",
+			"ClaudeCodeAdd",
+			"ClaudeCodeSelectModel",
+		},
+		opts = {
+			terminal = {
+				git_repo_cwd = true,
+			},
+		},
 	},
 }

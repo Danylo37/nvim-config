@@ -1,28 +1,234 @@
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+-- Every keymap in this config lives here. Nothing is set from a plugin spec.
+--
+-- Plugin mappings are wrapped in functions that `require` the plugin, or go
+-- through a `<cmd>` — both make lazy.nvim load it on first use, so keeping them
+-- here costs nothing at startup.
+--
+-- One exception: multicursor's `addKeymapLayer` (lua/plugins/editor.lua) is a
+-- plugin API, not a keymap. It binds <C-Left>/<C-Right>/<C-q>/<Esc> only while
+-- extra cursors are alive.
+--
+-- Prefixes (see the which-key groups in lua/plugins/ui.lua):
+--   <leader>a  AI / Claude       <leader>s  Search & replace
+--   <leader>b  Buffer            <leader>t  Terminal
+--   <leader>c  Code              <leader>u  UI toggles
+--   <leader>f  Find / files      <leader>v  Venv
+--   <leader>g  Git               <leader>x  Diagnostics
+--   <leader>h  Harpoon           <leader>m  Multicursor
+--   <leader>r  Refactor
 
-vim.keymap.set("n", '<leader>"', 'ysiw"', { remap = true, desc = 'Surround word with "' })
-vim.keymap.set("n", "<leader>'", "ysiw'", { remap = true, desc = "Surround word with '" })
-vim.keymap.set("n", "<leader>)", "ysiw(", { remap = true, desc = "Surround word with ()" })
-vim.keymap.set("n", "<leader>]", "ysiw[", { remap = true, desc = "Surround word with []" })
-vim.keymap.set("n", "<leader>}", "ysiw{", { remap = true, desc = "Surround word with {}" })
+local map = vim.keymap.set
+local util = require("util")
 
-vim.g.copilot_no_tab_map = true
-vim.g.copilot_enabled = true
-vim.g.copilot_assume_mapped = true
-vim.g.copilot_tab_fallback = ""
+-- ---------------------------------------------------------------- general ---
 
-vim.keymap.set("n", "<leader>ut", function()
-	require("telescope.builtin").colorscheme({
-		enable_preview = true,
-	})
-end, { desc = "Choose Theme" })
+map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 
-vim.keymap.set("i", "<C-y>", 'copilot#Accept("<CR>")', {
-	expr = true,
-	replace_keycodes = false,
-})
+map("n", "<leader>R", function()
+	vim.cmd("silent! wa")
+	vim.cmd("restart")
+end, { desc = "Restart Neovim" })
 
-vim.keymap.set("n", "<leader>rpy", function()
+map("n", "<leader>F", function()
+	require("conform").format({ async = true, lsp_format = "fallback" })
+end, { desc = "Format buffer" })
+
+-- ---------------------------------------------------------------- windows ---
+
+map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
+map("n", "<C-j>", "<C-w>j", { desc = "Go to lower window" })
+map("n", "<C-k>", "<C-w>k", { desc = "Go to upper window" })
+map("n", "<C-l>", "<C-w>l", { desc = "Go to right window" })
+
+map("n", "<A-h>", "<cmd>vertical resize -2<CR>", { desc = "Decrease window width" })
+map("n", "<A-l>", "<cmd>vertical resize +2<CR>", { desc = "Increase window width" })
+map("n", "<A-j>", "<cmd>resize -2<CR>", { desc = "Decrease window height" })
+map("n", "<A-k>", "<cmd>resize +2<CR>", { desc = "Increase window height" })
+
+-- ---------------------------------------------------------------- buffers ---
+
+map("n", "<S-l>", "<cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
+map("n", "<S-h>", "<cmd>BufferLineCyclePrev<CR>", { desc = "Previous buffer" })
+
+map("n", "<leader>bd", function()
+	require("snacks").bufdelete()
+end, { desc = "Close buffer" })
+
+-- Jump to the ordinals bufferline draws on each tab.
+for i = 1, 9 do
+	map("n", "<leader>b" .. i, "<cmd>BufferLineGoToBuffer " .. i .. "<CR>", { desc = "Go to buffer " .. i })
+end
+
+-- ------------------------------------------------------------- edit / txt ---
+
+map("n", '<leader>"', 'ysiw"', { remap = true, desc = 'Surround word with "' })
+map("n", "<leader>'", "ysiw'", { remap = true, desc = "Surround word with '" })
+map("n", "<leader>)", "ysiw(", { remap = true, desc = "Surround word with ()" })
+map("n", "<leader>]", "ysiw[", { remap = true, desc = "Surround word with []" })
+map("n", "<leader>}", "ysiw{", { remap = true, desc = "Surround word with {}" })
+
+map({ "n", "x", "o" }, "s", function()
+	require("flash").jump()
+end, { desc = "Flash jump" })
+
+-- ------------------------------------------------------------ multicursor ---
+
+map({ "n", "x" }, "<C-n>", function()
+	require("multicursor-nvim").matchAddCursor(1)
+end, { desc = "Add cursor at next match" })
+
+map({ "n", "x" }, "<C-x>", function()
+	require("multicursor-nvim").matchSkipCursor(1)
+end, { desc = "Skip match" })
+
+map({ "n", "x" }, "<C-Up>", function()
+	require("multicursor-nvim").lineAddCursor(-1)
+end, { desc = "Add cursor above" })
+
+map({ "n", "x" }, "<C-Down>", function()
+	require("multicursor-nvim").lineAddCursor(1)
+end, { desc = "Add cursor below" })
+
+map({ "n", "x" }, "<leader>ma", function()
+	require("multicursor-nvim").matchAllAddCursors()
+end, { desc = "Add cursor to all matches" })
+
+map("n", "<C-LeftMouse>", function()
+	require("multicursor-nvim").handleMouse()
+end, { desc = "Add cursor with mouse" })
+
+-- ---------------------------------------------------------- find / files ----
+
+map("n", "<leader>ff", function()
+	require("telescope.builtin").find_files()
+end, { desc = "Find files" })
+
+map("n", "<leader>fg", function()
+	require("telescope.builtin").live_grep()
+end, { desc = "Live grep" })
+
+map("n", "<leader>fb", function()
+	require("telescope.builtin").buffers()
+end, { desc = "Buffers" })
+
+map("n", "<leader>fh", function()
+	require("telescope.builtin").help_tags()
+end, { desc = "Help tags" })
+
+map("n", "<leader>e", function()
+	require("neo-tree.command").execute({ toggle = true, reveal = true, dir = util.root() })
+end, { desc = "Toggle file tree" })
+
+map("n", "<leader>fe", "<cmd>Neotree focus<CR>", { desc = "Focus file tree" })
+
+-- -------------------------------------------------------- search /replace ---
+
+map("n", "<leader>sr", function()
+	require("grug-far").open()
+end, { desc = "Search & replace (project)" })
+
+map("x", "<leader>sr", function()
+	require("grug-far").with_visual_selection()
+end, { desc = "Search & replace (selection)" })
+
+map("n", "<leader>sw", function()
+	require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } })
+end, { desc = "Search & replace word under cursor" })
+
+map("n", "<leader>sf", function()
+	require("grug-far").open({ prefills = { paths = vim.fn.expand("%") } })
+end, { desc = "Search & replace (current file)" })
+
+-- -------------------------------------------------------------------- lsp ---
+
+map("n", "gd", "<cmd>Lspsaga goto_definition<CR>", { desc = "Go to definition" })
+map("n", "gr", "<cmd>Lspsaga finder<CR>", { desc = "Find references" })
+map("n", "K", vim.lsp.buf.hover, { desc = "Hover docs" })
+
+map("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", { desc = "Code action" })
+
+map("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { desc = "Rename symbol" })
+map("n", "<leader>rN", "<cmd>Lspsaga rename ++project<CR>", { desc = "Rename symbol (project)" })
+
+map("n", "<leader>ru", function()
+	require("util.lsp_undo").undo()
+end, { desc = "Undo last LSP edit in all files" })
+
+-- ------------------------------------------------------------ diagnostics ---
+
+map("n", "de", "<cmd>Lspsaga show_line_diagnostics<CR>", { desc = "Line diagnostics" })
+
+map("n", "[d", function()
+	vim.diagnostic.jump({ count = -1, float = true })
+end, { desc = "Previous diagnostic" })
+
+map("n", "]d", function()
+	vim.diagnostic.jump({ count = 1, float = true })
+end, { desc = "Next diagnostic" })
+
+map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<CR>", { desc = "All diagnostics" })
+map("n", "<leader>xw", "<cmd>Trouble diagnostics toggle filter.buf=0<CR>", { desc = "Buffer diagnostics" })
+map("n", "<leader>xr", "<cmd>Trouble lsp_references toggle<CR>", { desc = "References" })
+map("n", "<leader>xd", "<cmd>Trouble lsp_definitions toggle<CR>", { desc = "Definitions" })
+map("n", "<leader>xq", "<cmd>Trouble quickfix toggle<CR>", { desc = "Quickfix" })
+map("n", "<leader>xl", "<cmd>Trouble loclist toggle<CR>", { desc = "Loclist" })
+
+-- -------------------------------------------------------------------- git ---
+
+map("n", "]h", "<cmd>Gitsigns next_hunk<CR>", { desc = "Next hunk" })
+map("n", "[h", "<cmd>Gitsigns prev_hunk<CR>", { desc = "Previous hunk" })
+
+map("n", "<leader>gs", "<cmd>Gitsigns stage_hunk<CR>", { desc = "Stage hunk" })
+map("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<CR>", { desc = "Reset hunk" })
+map("n", "<leader>gp", "<cmd>Gitsigns preview_hunk<CR>", { desc = "Preview hunk" })
+
+-- ---------------------------------------------------------------- harpoon ---
+
+map("n", "<leader>ha", function()
+	require("harpoon"):list():add()
+end, { desc = "Harpoon: add file" })
+
+map("n", "<leader>hd", function()
+	require("harpoon"):list():remove()
+end, { desc = "Harpoon: remove file" })
+
+map("n", "<C-e>", function()
+	local harpoon = require("harpoon")
+	harpoon.ui:toggle_quick_menu(harpoon:list())
+end, { desc = "Harpoon: toggle menu" })
+
+for i = 1, 6 do
+	map("n", "<leader>" .. i, function()
+		require("harpoon"):list():select(i)
+	end, { desc = "Harpoon: go to file " .. i })
+end
+
+-- ------------------------------------------------------------- terminal ----
+
+map("t", "<C-q>", [[<C-\><C-n>]], { desc = "Exit terminal mode" })
+
+-- Replaces toggleterm's `open_mapping`, which bound the same three modes.
+map("n", [[<C-\>]], "<cmd>ToggleTerm<CR>", { desc = "Toggle terminal" })
+map("i", [[<C-\>]], "<Esc><cmd>ToggleTerm<CR>", { desc = "Toggle terminal" })
+map("t", [[<C-\>]], [[<C-\><C-n><cmd>ToggleTerm<CR>]], { desc = "Toggle terminal" })
+
+map("n", "<leader>tt", function()
+	vim.cmd("ToggleTerm direction=horizontal dir=" .. vim.fn.fnameescape(util.root()))
+end, { desc = "Toggle terminal" })
+
+map("n", "<leader>tf", function()
+	vim.cmd("ToggleTerm direction=float dir=" .. vim.fn.fnameescape(util.root()))
+end, { desc = "Floating terminal" })
+
+map("n", "<leader>ts", "<cmd>TermSelect<CR>", { desc = "Select terminal" })
+
+for i = 1, 9 do
+	map("n", "<leader>t" .. i, function()
+		vim.cmd(i .. "ToggleTerm direction=horizontal dir=" .. vim.fn.fnameescape(util.root()))
+	end, { desc = "Terminal " .. i })
+end
+
+map("n", "<leader>tp", function()
 	vim.cmd("w")
 
 	local dir = vim.fn.expand("%:p:h")
@@ -35,84 +241,26 @@ vim.keymap.set("n", "<leader>rpy", function()
 	vim.fn.chansend(vim.b.terminal_job_id, "python '" .. file .. "'\n")
 end, { desc = "Run current python file" })
 
-vim.keymap.set("n", "<S-l>", "<cmd>BufferLineCycleNext<CR>", {
-	desc = "Next buffer",
+-- ------------------------------------------------------------ ai / claude ---
+
+map("i", "<C-y>", 'copilot#Accept("<CR>")', {
+	expr = true,
+	replace_keycodes = false,
+	desc = "Accept Copilot suggestion",
 })
 
-vim.keymap.set("n", "<S-h>", "<cmd>BufferLineCyclePrev<CR>", {
-	desc = "Previous buffer",
-})
+map("n", "<leader>aa", "<cmd>ClaudeCode<CR>", { desc = "Claude Code" })
+map("x", "<leader>aa", "<cmd>ClaudeCodeSend<CR>", { desc = "Send selection to Claude" })
+map("n", "<leader>af", "<cmd>ClaudeCodeFocus<CR>", { desc = "Focus Claude" })
+map("n", "<leader>ab", "<cmd>ClaudeCodeAdd %<CR>", { desc = "Add current file to Claude" })
+map("n", "<leader>am", "<cmd>ClaudeCodeSelectModel<CR>", { desc = "Select Claude model" })
 
-vim.keymap.set("n", "<leader>bd", function()
-	require("snacks").bufdelete()
-end, { desc = "Close buffer" })
+-- ------------------------------------------------------------------- misc ---
 
-vim.keymap.set("n", "<leader>R", function()
-	vim.cmd("silent! wa")
-	vim.cmd("restart")
-end, { desc = "Restart Neovim" })
+map("n", "<leader>ut", function()
+	require("telescope.builtin").colorscheme({ enable_preview = true })
+end, { desc = "Choose theme" })
 
--- Window navigation
-vim.keymap.set("n", "<C-h>", "<C-w>h", {
-	desc = "Go to left window",
-})
+map("n", "<leader>uc", "<cmd>ColorizerToggle<CR>", { desc = "Toggle colorizer" })
 
-vim.keymap.set("n", "<C-j>", "<C-w>j", {
-	desc = "Go to lower window",
-})
-
-vim.keymap.set("n", "<C-k>", "<C-w>k", {
-	desc = "Go to upper window",
-})
-
-vim.keymap.set("n", "<C-l>", "<C-w>l", {
-	desc = "Go to right window",
-})
-
--- Resize windows
-vim.keymap.set("n", "<A-h>", "<cmd>vertical resize -2<CR>", {
-	desc = "Decrease window width",
-})
-
-vim.keymap.set("n", "<A-l>", "<cmd>vertical resize +2<CR>", {
-	desc = "Increase window width",
-})
-
-vim.keymap.set("n", "<A-j>", "<cmd>resize -2<CR>", {
-	desc = "Decrease window height",
-})
-
-vim.keymap.set("n", "<A-k>", "<cmd>resize +2<CR>", {
-	desc = "Increase window height",
-})
-
--- Terminal mode
-vim.keymap.set("t", "<C-q>", [[<C-\><C-n>]], {
-	desc = "Exit terminal mode",
-})
-
--- LSP Saga keymaps
-vim.keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", {
-	desc = "Code action",
-})
-
--- Claude Code keymaps
-vim.keymap.set("n", "<leader>cc", "<cmd>ClaudeCode<CR>", {
-	desc = "Claude Code",
-})
-
-vim.keymap.set("n", "<leader>cf", "<cmd>ClaudeCodeFocus<CR>", {
-	desc = "Focus Claude",
-})
-
-vim.keymap.set("v", "<leader>cc", "<cmd>ClaudeCodeSend<CR>", {
-	desc = "Send selection to Claude",
-})
-
-vim.keymap.set("n", "<leader>cA", "<cmd>ClaudeCodeAdd %<CR>", {
-	desc = "Add current file to Claude",
-})
-
-vim.keymap.set("n", "<leader>cm", "<cmd>ClaudeCodeSelectModel<CR>", {
-	desc = "Select Claude model",
-})
+map("n", "<leader>vs", "<cmd>VenvSelect<CR>", { desc = "Select Python venv" })
