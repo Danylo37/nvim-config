@@ -100,20 +100,18 @@ return {
 	},
 
 	{
+		-- Config only, no `vim.notify` assignment: noice.nvim owns vim.notify and
+		-- uses this as its rendering backend. Setting it here too raced noice's
+		-- own assignment and triggered its "vim.notify has been overwritten"
+		-- warning whenever something notified after both had loaded.
 		"rcarriga/nvim-notify",
-		config = function()
-			local notify = require("notify")
-
-			notify.setup({
-				stages = "fade",
-				timeout = 3000,
-				render = "default",
-				top_down = true,
-				background_colour = "#000000",
-			})
-
-			vim.notify = notify
-		end,
+		opts = {
+			stages = "fade",
+			timeout = 3000,
+			render = "default",
+			top_down = true,
+			background_colour = "#000000",
+		},
 	},
 
 	{
