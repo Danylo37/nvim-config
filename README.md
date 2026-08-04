@@ -1,294 +1,298 @@
 # nvim-config
 
-Личный конфиг Neovim на [lazy.nvim](https://github.com/folke/lazy.nvim): LSP из коробки
-для Python/TS/JS/HTML/CSS/Lua/SQL, telescope как единственный пикер, дашборд с недавними
-проектами, AI-ассистенты (Copilot + Claude Code) и все шорткаты в одном файле.
+Personal Neovim config on [lazy.nvim](https://github.com/folke/lazy.nvim): LSP out of
+the box for Python/TS/JS/HTML/CSS/Lua/SQL, telescope as the single picker, a dashboard
+with recent projects, AI assistants (Copilot + Claude Code), and every keymap in one file.
 
-## Оглавление
+## Table of contents
 
-- [Зависимости](#зависимости)
-- [Быстрый старт](#быстрый-старт)
-- [Структура](#структура)
-- [Плагины](#плагины)
-- [Шорткаты](#шорткаты)
-- [Отступы](#отступы)
-- [Кастомизация](#кастомизация)
+- [Dependencies](#dependencies)
+- [Quick start](#quick-start)
+- [Structure](#structure)
+- [Plugins](#plugins)
+- [Keymaps](#keymaps)
+- [Indentation](#indentation)
+- [Customizing](#customizing)
 
-## Зависимости
+## Dependencies
 
-| Что | Обязательно | Зачем | Если нет |
+| What | Required | Why | If missing |
 |---|---|---|---|
-| Neovim **0.11+** | да | `vim.lsp.config`/`vim.lsp.enable`, `vim.diagnostic.jump` — этих API раньше 0.11 нет | конфиг не запустится |
-| `git` | да | lazy.nvim ставит и обновляет плагины через `git clone` | нечем поставить плагины |
-| C-компилятор (`cc`/`gcc`/`clang`) | да | treesitter собирает парсеры из исходников при `:TSUpdate` | подсветка синтаксиса и отступы через treesitter не заработают |
-| [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) | да | нужен telescope для `live_grep` | `<leader>fg`, `<leader>sr` и другой поиск не будут работать |
-| [fd](https://github.com/sharkdp/fd) | да | быстрый поиск файлов у telescope и venv-selector | venv не найдётся сам, `find_files` упадёт на медленный фолбэк или сломается |
-| Node.js + npm | да | под них Mason ставит `ts_ls`, `prettier`, `sqls` и т.п. | часть LSP-серверов и форматтеров не установится |
-| [Nerd Font](https://www.nerdfonts.com/) в терминале | нет | иконки в дашборде, дереве файлов, статусбаре, значках git/диагностики | вместо иконок — пустые клетки или кракозябры, функционал не страдает |
-| Python 3 + `pip` | нет, но нужен для Python-проектов | `basedpyright`/`ruff`/`black` сами по себе не требуют системного Python, а вот проектные venv — да | venv-selector (`<leader>vs`) нечего будет находить |
+| Neovim **0.11+** | yes | uses `vim.lsp.config`/`vim.lsp.enable`, `vim.diagnostic.jump` — none of these exist before 0.11 | the config won't start |
+| `git` | yes | lazy.nvim installs and updates plugins via `git clone` | nothing to install plugins with |
+| C compiler (`cc`/`gcc`/`clang`) | yes | treesitter builds parsers from source on `:TSUpdate` | syntax highlighting and treesitter-based indent won't work |
+| [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) | yes | telescope needs it for `live_grep` | `<leader>fg`, `<leader>sr`, and other search stop working |
+| [fd](https://github.com/sharkdp/fd) | yes | fast file search for telescope and venv-selector | venv won't auto-discover itself, `find_files` falls back to something slow or breaks |
+| Node.js + npm | yes | Mason installs `ts_ls`, `prettier`, `sqls`, etc. through it | some LSP servers and formatters won't install |
+| [Nerd Font](https://www.nerdfonts.com/) in your terminal | no | icons in the dashboard, file tree, statusline, git/diagnostic signs | icons show as blank boxes or garbled glyphs; nothing else breaks |
+| Python 3 + `pip` | no, but needed for Python projects | `basedpyright`/`ruff`/`black` don't need a system Python themselves, but project venvs do | venv-selector (`<leader>vs`) has nothing to find |
 
-На Debian/Ubuntu `fd` часто ставится как пакет `fd-find` и доступен под именем `fdfind` —
-тогда в `lua/plugins/lang.lua` для `venv-selector.nvim` нужно передать
-`options = { fd_binary_name = "fdfind" }`.
+On Debian/Ubuntu, `fd` is often packaged as `fd-find` and only available as `fdfind` —
+in that case pass `options = { fd_binary_name = "fdfind" }` to `venv-selector.nvim`
+in `lua/plugins/lang.lua`.
 
-## Быстрый старт
+![Dashboard](assets/dashboard.png)
+
+## Quick start
 
 ```bash
 git clone <repo-url> ~/.config/nvim
 nvim
 ```
 
-При первом запуске lazy.nvim сам себя склонирует и поставит все плагины — подождите,
-пока в углу не пропадёт прогресс. Дальше:
+On first launch, lazy.nvim clones itself and installs every plugin — wait for the
+progress indicator in the corner to disappear. From there:
 
-- `:Lazy` — статус плагинов, обновления, профиль запуска
-- `:Mason` — статус LSP-серверов и форматтеров, довешиваются автоматически при старте
-- `:checkhealth` — если что-то не работает, начните отсюда
+- `:Lazy` — plugin status, updates, startup profile
+- `:Mason` — LSP server and formatter status; they install automatically on startup
+- `:checkhealth` — start here if something isn't working
 
-Дашборд открывается сам при запуске без файла — на нём же список горячих клавиш (`f`/`p`/`g`/`r`/`c`).
+The dashboard opens by itself when you launch Neovim without a file — it also lists
+the hotkeys (`f`/`p`/`g`/`r`/`c`).
 
-## Структура
+## Structure
 
 ```
-init.lua                    -- точка входа: options → keymaps → autocmds → бутстрап lazy.nvim
+init.lua                    -- entry point: options -> keymaps -> autocmds -> lazy.nvim bootstrap
 
 lua/config/
-  options.lua                -- vim.opt, отступы, leader
-  keymaps.lua                -- ВСЕ шорткаты конфига, единый файл
-  autocmds.lua                -- отступы для lua/js/ts/html/css/json/yaml
+  options.lua                -- vim.opt, indent, leader
+  keymaps.lua                -- EVERY keymap in the config, one file
+  autocmds.lua                -- indent overrides for lua/js/ts/html/css/json/yaml
 
-lua/plugins/                 -- один файл на тематическую группу плагинов
+lua/plugins/                 -- one file per plugin theme
   lsp.lua                     -- mason, lspconfig, lspsaga, trouble
-  completion.lua               -- nvim-cmp, автозакрытие скобок
+  completion.lua               -- nvim-cmp, autopairs
   editor.lua                  -- treesitter, flash, multicursor, harpoon, grug-far, conform
   files.lua                   -- neo-tree, telescope
   git.lua                     -- gitsigns
   lang.lua                    -- venv-selector, jupytext, render-markdown
   ai.lua                      -- copilot, claudecode
   terminal.lua                -- toggleterm
-  snacks.lua                  -- дашборд и его пикер проектов
-  ui.lua                      -- тема, статусбар, вкладки, which-key, уведомления и т.д.
+  snacks.lua                  -- dashboard and its project picker
+  ui.lua                      -- theme, statusline, tabs, which-key, notifications, etc.
 
 lua/util/
-  init.lua                    -- поиск корня проекта (util.root / util.find_root)
-  lsp_undo.lua                 -- отмена multi-file LSP-правок (<leader>ru)
+  init.lua                    -- project root lookup (util.root / util.find_root)
+  lsp_undo.lua                 -- undo multi-file LSP edits (<leader>ru)
 ```
 
-## Плагины
+## Plugins
 
-### LSP и код
-| Плагин | Зачем |
+### LSP and code
+| Plugin | What it's for |
 |---|---|
-| `mason.nvim` + `mason-lspconfig` + `mason-tool-installer` | ставит и обновляет LSP-серверы и форматтеры |
-| `nvim-lspconfig` | подключает LSP: `basedpyright` (Python), `ts_ls` (JS/TS), `html`, `cssls`, `lua_ls`, `sqls` |
-| `lspsaga.nvim` | всплывающие окна для definition/finder/rename/code action/диагностики строки |
-| `trouble.nvim` | постоянная панель диагностики/references/quickfix внизу экрана |
-| `conform.nvim` | форматирование: stylua (Lua), ruff/black (Python), prettier (JS/TS/HTML/CSS/JSON/YAML/MD), sql_formatter |
-| `nvim-treesitter` | подсветка синтаксиса и отступы через парсеры (ветка `master`) |
+| `mason.nvim` + `mason-lspconfig` + `mason-tool-installer` | installs and updates LSP servers and formatters |
+| `nvim-lspconfig` | wires up LSP: `basedpyright` (Python), `ts_ls` (JS/TS), `html`, `cssls`, `lua_ls`, `sqls` |
+| `lspsaga.nvim` | floating windows for definition/finder/rename/code action/line diagnostics |
+| `trouble.nvim` | persistent panel for diagnostics/references/quickfix at the bottom |
+| `conform.nvim` | formatting: stylua (Lua), ruff/black (Python), prettier (JS/TS/HTML/CSS/JSON/YAML/MD), sql_formatter |
+| `nvim-treesitter` | syntax highlighting and indent via parsers (pinned to `master`) |
 
-### Автодополнение и AI
-| Плагин | Зачем |
+### Completion and AI
+| Plugin | What it's for |
 |---|---|
-| `nvim-cmp` + `cmp-nvim-lsp`/`cmp-buffer`/`cmp-path` | автодополнение |
-| `nvim-autopairs` | автозакрытие скобок/кавычек |
-| `copilot.vim` | инлайн-подсказки GitHub Copilot |
-| `claudecode.nvim` | Claude Code прямо в редакторе |
+| `nvim-cmp` + `cmp-nvim-lsp`/`cmp-buffer`/`cmp-path` | autocompletion |
+| `nvim-autopairs` | auto-closes brackets/quotes |
+| `copilot.vim` | inline GitHub Copilot suggestions |
+| `claudecode.nvim` | Claude Code inside the editor |
 
-### Навигация и поиск
-| Плагин | Зачем |
+### Navigation and search
+| Plugin | What it's for |
 |---|---|
-| `telescope.nvim` | единственный пикер: файлы, grep, буферы, темы |
-| `neo-tree.nvim` | дерево файлов |
-| `harpoon` (branch `harpoon2`) | быстрые закладки на 6 файлов |
-| `flash.nvim` | прыжки по видимому тексту (`s`) |
-| `grug-far.nvim` | поиск и замена по проекту/файлу/выделению |
-| `multicursor.nvim` | мультикурсор |
+| `telescope.nvim` | the one picker: files, grep, buffers, colorschemes |
+| `neo-tree.nvim` | file tree |
+| `harpoon` (branch `harpoon2`) | quick bookmarks for up to 6 files |
+| `flash.nvim` | jump to visible text (`s`) |
+| `grug-far.nvim` | search and replace across the project/file/selection |
+| `multicursor.nvim` | multiple cursors |
 
 ### Git
-| Плагин | Зачем |
+| Plugin | What it's for |
 |---|---|
-| `gitsigns.nvim` | значки изменений на полях, staging/reset по хункам |
+| `gitsigns.nvim` | change markers in the gutter, stage/reset by hunk |
 
-### Языки
-| Плагин | Зачем |
+### Languages
+| Plugin | What it's for |
 |---|---|
-| `venv-selector.nvim` | выбор и автоактивация Python-окружения (`.venv`) |
-| `jupytext.nvim` | открывает `.ipynb` как обычный python-файл |
-| `render-markdown.nvim` | рендер markdown прямо в буфере |
+| `venv-selector.nvim` | picks and auto-activates a Python virtualenv (`.venv`) |
+| `jupytext.nvim` | opens `.ipynb` files as plain python |
+| `render-markdown.nvim` | renders markdown right in the buffer |
 
 ### UI
-| Плагин | Зачем |
+| Plugin | What it's for |
 |---|---|
-| `tokyonight.nvim` | цветовая схема |
-| `snacks.nvim` | дашборд со списком проектов и недавних файлов |
-| `lualine.nvim` | статусбар |
-| `bufferline.nvim` | вкладки буферов |
-| `which-key.nvim` | подсказки по префиксам `<leader>` |
-| `indent-blankline.nvim` | направляющие отступов |
-| `nvim-colorizer.lua` | подсветка цветов (`#fff`, `rgb(...)`) прямо в тексте |
-| `noice.nvim` + `nvim-notify` | красивые командная строка и уведомления |
-| `nvim-scrollbar` + `nvim-hlslens` | скроллбар с метками git/диагностики/поиска и счётчик совпадений при поиске |
-| `toggleterm.nvim` | встроенный терминал |
+| `tokyonight.nvim` | color scheme |
+| `snacks.nvim` | dashboard with recent projects and recent files |
+| `lualine.nvim` | statusline |
+| `bufferline.nvim` | buffer tabs |
+| `which-key.nvim` | shows hints for `<leader>` prefixes |
+| `indent-blankline.nvim` | indent guides |
+| `nvim-colorizer.lua` | highlights colors (`#fff`, `rgb(...)`) inline |
+| `noice.nvim` + `nvim-notify` | nicer cmdline and notifications |
+| `nvim-scrollbar` + `nvim-hlslens` | scrollbar with git/diagnostic/search marks, plus a match counter while searching |
+| `toggleterm.nvim` | built-in terminal |
 
-## Шорткаты
+## Keymaps
 
-Leader — **Space**. Полный список живёт в `lua/config/keymaps.lua` (с `desc`, так что
-`which-key` подскажет их и в самом Neovim — просто нажмите `<leader>` и подождите).
+Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc`, so
+`which-key` shows it inside Neovim too — just press `<leader>` and wait).
 
-### Общее
-| Клавиша | Действие |
+### General
+| Key | Action |
 |---|---|
-| `<Esc>` | Снять подсветку поиска |
-| `n` / `N` | Следующее / предыдущее совпадение поиска (со счётчиком) |
-| `*` / `#` | Поиск слова под курсором |
-| `<leader>R` | Сохранить всё и перезапустить Neovim |
-| `<leader>F` | Отформатировать буфер |
-| `s` | Flash: прыжок по тексту |
+| `<Esc>` | Clear search highlight |
+| `n` / `N` | Next / previous search match (with counter) |
+| `*` / `#` | Search word under cursor |
+| `<leader>R` | Save all and restart Neovim |
+| `<leader>F` | Format buffer |
+| `s` | Flash: jump to text |
 
-### Окна и буферы
-| Клавиша | Действие |
+### Windows and buffers
+| Key | Action |
 |---|---|
-| `<C-h/j/k/l>` | Перейти между окнами |
-| `<A-h/j/k/l>` | Изменить размер окна |
-| `<S-h>` / `<S-l>` | Предыдущий / следующий буфер |
-| `<leader>bd` | Закрыть буфер |
-| `<leader>b1..9` | Перейти к буферу по номеру |
+| `<C-h/j/k/l>` | Move between windows |
+| `<A-h/j/k/l>` | Resize window |
+| `<S-h>` / `<S-l>` | Previous / next buffer |
+| `<leader>bd` | Close buffer |
+| `<leader>b1..9` | Go to buffer by number |
 
 ### `<leader>f` — Find / Files
-| Клавиша | Действие |
+| Key | Action |
 |---|---|
-| `<leader>ff` | Найти файл |
+| `<leader>ff` | Find files |
 | `<leader>fg` | Live grep |
-| `<leader>fb` | Список буферов |
-| `<leader>fh` | Поиск по `:help` |
-| `<leader>e` | Дерево файлов (toggle) |
-| `<leader>fe` | Фокус на дереве файлов |
+| `<leader>fb` | List buffers |
+| `<leader>fh` | Search `:help` |
+| `<leader>e` | Toggle file tree |
+| `<leader>fe` | Focus file tree |
 
 ### `<leader>s` — Search & Replace
-| Клавиша | Действие |
+| Key | Action |
 |---|---|
-| `<leader>sr` | Поиск и замена по проекту (или по выделению в visual) |
-| `<leader>sw` | Поиск и замена слова под курсором |
-| `<leader>sf` | Поиск и замена в текущем файле |
+| `<leader>sr` | Search & replace across the project (or the selection, in visual mode) |
+| `<leader>sw` | Search & replace the word under cursor |
+| `<leader>sf` | Search & replace in the current file |
 
-### LSP и код
-| Клавиша | Действие |
+### LSP and code
+| Key | Action |
 |---|---|
-| `gd` | Перейти к определению |
-| `gr` | Найти использования |
-| `K` | Документация под курсором |
+| `gd` | Go to definition |
+| `gr` | Find references |
+| `K` | Hover docs |
 | `<leader>ca` | Code action |
-| `<leader>rn` | Переименовать символ |
-| `<leader>rN` | Переименовать символ (по всему проекту) |
-| `<leader>ru` | Отменить последнюю LSP-правку во всех файлах |
+| `<leader>rn` | Rename symbol |
+| `<leader>rN` | Rename symbol (project-wide) |
+| `<leader>ru` | Undo the last LSP edit across all files |
 
-### `<leader>x` — Диагностика
-| Клавиша | Действие |
+### `<leader>x` — Diagnostics
+| Key | Action |
 |---|---|
-| `de` | Диагностика текущей строки |
-| `[d` / `]d` | Предыдущая / следующая диагностика |
-| `<leader>xx` | Все диагностики (Trouble) |
-| `<leader>xw` | Диагностика текущего буфера |
+| `de` | Line diagnostics |
+| `[d` / `]d` | Previous / next diagnostic |
+| `<leader>xx` | All diagnostics (Trouble) |
+| `<leader>xw` | Buffer diagnostics |
 | `<leader>xr` / `<leader>xd` | References / Definitions (Trouble) |
 | `<leader>xq` / `<leader>xl` | Quickfix / Loclist |
 
 ### `<leader>g` — Git
-| Клавиша | Действие |
+| Key | Action |
 |---|---|
-| `]h` / `[h` | Следующий / предыдущий хунк |
-| `<leader>gs` | Застейджить хунк |
-| `<leader>gr` | Откатить хунк |
-| `<leader>gp` | Превью хунка |
+| `]h` / `[h` | Next / previous hunk |
+| `<leader>gs` | Stage hunk |
+| `<leader>gr` | Reset hunk |
+| `<leader>gp` | Preview hunk |
 
 ### `<leader>h` — Harpoon
-| Клавиша | Действие |
+| Key | Action |
 |---|---|
-| `<leader>ha` | Добавить файл |
-| `<leader>hd` | Убрать файл |
-| `<C-e>` | Меню Harpoon |
-| `<leader>1..6` | Перейти к файлу по номеру |
+| `<leader>ha` | Add file |
+| `<leader>hd` | Remove file |
+| `<C-e>` | Toggle Harpoon menu |
+| `<leader>1..6` | Go to file by number |
 
 ### `<leader>m` — Multicursor
-| Клавиша | Действие |
+| Key | Action |
 |---|---|
-| `<C-n>` | Добавить курсор на следующее совпадение |
-| `<C-x>` | Пропустить совпадение |
-| `<C-Up>` / `<C-Down>` | Добавить курсор строкой выше / ниже |
-| `<leader>ma` | Курсор на все совпадения |
-| `<C-Left>` / `<C-Right>` / `<C-q>` | Навигация между курсорами (пока курсоров несколько) |
+| `<C-n>` | Add cursor at next match |
+| `<C-x>` | Skip match |
+| `<C-Up>` / `<C-Down>` | Add cursor above / below |
+| `<leader>ma` | Add cursor to every match |
+| `<C-Left>` / `<C-Right>` / `<C-q>` | Navigate cursors (only while multiple cursors are active) |
 
 ### `<leader>t` — Terminal
-| Клавиша | Действие |
+| Key | Action |
 |---|---|
-| `<C-\>` | Открыть/закрыть терминал (из normal, insert, terminal) |
-| `<leader>tt` | Терминал снизу |
-| `<leader>tf` | Плавающий терминал |
-| `<leader>ts` | Выбрать терминал |
-| `<leader>t1..9` | Терминал по номеру |
-| `<leader>tp` | Запустить текущий python-файл в терминале |
+| `<C-\>` | Toggle terminal (from normal, insert, or terminal mode) |
+| `<leader>tt` | Terminal at the bottom |
+| `<leader>tf` | Floating terminal |
+| `<leader>ts` | Select terminal |
+| `<leader>t1..9` | Terminal by number |
+| `<leader>tp` | Run the current python file in a terminal |
 
 ### `<leader>a` — AI / Claude
-| Клавиша | Действие |
+| Key | Action |
 |---|---|
-| `<C-y>` (insert) | Принять подсказку Copilot |
-| `<leader>aa` | Открыть Claude Code (или отправить выделение) |
-| `<leader>af` | Фокус на окне Claude |
-| `<leader>ab` | Добавить текущий файл в контекст Claude |
-| `<leader>am` | Выбрать модель Claude |
+| `<C-y>` (insert) | Accept Copilot suggestion |
+| `<leader>aa` | Open Claude Code (or send selection) |
+| `<leader>af` | Focus Claude window |
+| `<leader>ab` | Add current file to Claude's context |
+| `<leader>am` | Select Claude model |
 
-### Прочее
-| Клавиша | Действие |
+### Misc
+| Key | Action |
 |---|---|
-| `<leader>ut` | Выбрать цветовую схему (с превью) |
-| `<leader>uc` | Toggle подсветки цветов |
-| `<leader>vs` | Выбрать Python-окружение |
-| `<leader>"` `'` `)` `]` `}` | Обернуть слово в кавычки/скобки |
+| `<leader>ut` | Pick a colorscheme (with preview) |
+| `<leader>uc` | Toggle colorizer |
+| `<leader>vs` | Select Python virtualenv |
+| `<leader>"` `'` `)` `]` `}` | Surround word with quotes/brackets |
 
-## Отступы
+## Indentation
 
-Глобально — 4 пробела (`lua/config/options.lua`). Исключения на 2 пробела:
-Lua, JS/TS/HTML/CSS/JSON/YAML (`lua/config/autocmds.lua`). Python отдельно не задан —
-за 4 пробела отвечает встроенный `ftplugin/python.vim` (PEP8).
+4 spaces globally (`lua/config/options.lua`). 2-space overrides: Lua,
+JS/TS/HTML/CSS/JSON/YAML (`lua/config/autocmds.lua`). Python has no override of its
+own — Neovim's built-in `ftplugin/python.vim` already does 4 spaces (PEP8).
 
-## Кастомизация
+## Customizing
 
-Правило конфига: **шорткаты — только в `keymaps.lua`**, спеки плагинов их не задают
-(единственное исключение — `mc.addKeymapLayer` в `editor.lua`, это API самого
-multicursor.nvim, а не keymap). Если правите чужой плагин или добавляете свой —
-держите этот же порядок.
+House rule: **keymaps live only in `keymaps.lua`**, plugin specs never set them
+(the one exception is multicursor's `mc.addKeymapLayer` in `editor.lua` — that's the
+plugin's own API, not a keymap). Keep that same split when editing a plugin or adding
+your own.
 
-**Добавить плагин.** Спеки — обычные таблицы lazy.nvim, каждая в файле нужной
-тематической группы (см. [Структура](#структура)); если группа не подходит ни под одну —
-можно завести новый файл в `lua/plugins/`, lazy.nvim подхватит его сам
-(`require("lazy").setup("plugins")` в `init.lua` сканирует всю папку). Минимальный спек:
+**Add a plugin.** Specs are plain lazy.nvim tables, each in whichever theme file fits
+(see [Structure](#structure)); if none fit, start a new file under `lua/plugins/` —
+lazy.nvim picks it up on its own (`require("lazy").setup("plugins")` in `init.lua`
+scans the whole folder). Minimal spec:
 
 ```lua
 {
-  "автор/плагин.nvim",
-  opts = {},         -- если плагин поддерживает setup(opts)
-  -- event / cmd / ft / keys — если плагин должен грузиться лениво
+  "author/plugin.nvim",
+  opts = {},         -- if the plugin supports setup(opts)
+  -- event / cmd / ft / keys -- if the plugin should load lazily
 }
 ```
 
-**Добавить шорткат.** Один `map(...)` в `lua/config/keymaps.lua`, в секцию по смыслу
-(они разделены комментариями-разделителями). Формат:
+**Add a keymap.** One `map(...)` call in `lua/config/keymaps.lua`, in whichever
+section fits (they're split by comment headers). Shape:
 
 ```lua
 map("n", "<leader>xy", function()
-  require("плагин").какая_то_функция()
-end, { desc = "Что делает" })
+  require("plugin").some_function()
+end, { desc = "What it does" })
 ```
 
-`desc` обязателен — без него which-key не покажет подсказку. Если добавляете новый
-префикс `<leader>X`, впишите его в таблицу в шапке `keymaps.lua` и добавьте группу
-в `spec` у `which-key.nvim` (`lua/plugins/ui.lua`).
+`desc` is required — without it which-key won't show a hint. If you add a new
+`<leader>X` prefix, list it in the table at the top of `keymaps.lua` and add a group
+to `which-key.nvim`'s `spec` (`lua/plugins/ui.lua`).
 
-**Добавить LSP-сервер.** В `lua/plugins/lsp.lua`: имя сервера — в `ensure_installed` у
-`mason-lspconfig`, затем `vim.lsp.config("имя", { capabilities = capabilities, ... })`
-и в список `vim.lsp.enable({...})`. Имя сервера — то, что в
-[реестре Mason](https://mason-registry.dev/registry/list), а не в `lspconfig`.
+**Add an LSP server.** In `lua/plugins/lsp.lua`: the server name goes in
+`mason-lspconfig`'s `ensure_installed`, then `vim.lsp.config("name", { capabilities =
+capabilities, ... })`, then into the `vim.lsp.enable({...})` list. The name is
+whatever's in the [Mason registry](https://mason-registry.dev/registry/list), not
+`lspconfig`'s.
 
-**Добавить форматтер.** В `lua/plugins/editor.lua`, у `conform.nvim`: filetype и
-инструмент — в `formatters_by_ft`; сам инструмент, если его ещё нет в системе —
-в `ensure_installed` у `mason-tool-installer` (`lua/plugins/lsp.lua`), чтобы Mason
-поставил его сам при следующем запуске.
+**Add a formatter.** In `lua/plugins/editor.lua`, under `conform.nvim`: the filetype
+and tool go in `formatters_by_ft`; if the tool isn't installed yet, add it to
+`mason-tool-installer`'s `ensure_installed` (`lua/plugins/lsp.lua`) so Mason installs
+it on the next launch.
