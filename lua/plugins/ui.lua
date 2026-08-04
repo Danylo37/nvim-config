@@ -150,6 +150,9 @@ return {
 	{
 		"petertriho/nvim-scrollbar",
 		event = "VeryLazy",
+		-- The search handler patches hlslens' config rather than setting it up,
+		-- so hlslens has to be configured first. As a dependency it always is.
+		dependencies = { "kevinhwang91/nvim-hlslens" },
 		config = function()
 			require("scrollbar").setup({
 				handle = {
@@ -159,12 +162,14 @@ return {
 
 			require("scrollbar.handlers.gitsigns").setup()
 			require("scrollbar.handlers.diagnostic").setup()
+			require("scrollbar.handlers.search").setup()
 		end,
 	},
 
 	{
+		-- Draws the "[3/12]" counter next to the current match. The n/N/*/#
+		-- mappings that drive it live in config/keymaps.lua.
 		"kevinhwang91/nvim-hlslens",
-		event = "VeryLazy",
 		config = function()
 			require("hlslens").setup()
 		end,
