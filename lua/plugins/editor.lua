@@ -1,15 +1,17 @@
 return {
 	{
-		-- Pinned to `master` on purpose. The `main` branch is a full rewrite that
-		-- needs Neovim 0.12+ and an external tree-sitter-cli; `master` only needs
-		-- a C compiler and ships pre-generated parsers.
+		-- `main` is the rewrite for Neovim 0.12+: no modules, Neovim itself drives
+		-- highlighting. It needs a system tree-sitter-cli (>= 0.26.1) plus curl/tar.
+		-- `master` is frozen at Neovim 0.11 and is broken here: it registers query
+		-- directives with the `all = false` option that 0.12 removed, so `match[id]`
+		-- arrives as TSNode[] and its markdown injection directive dies on
+		-- `node:range()`. Does not support lazy-loading.
 		"nvim-treesitter/nvim-treesitter",
-		branch = "master",
+		branch = "main",
+		lazy = false,
 		build = ":TSUpdate",
-		event = { "BufReadPost", "BufNewFile" },
-		main = "nvim-treesitter.configs",
-		opts = {
-			ensure_installed = {
+		config = function()
+			require("nvim-treesitter").install({
 				"python",
 				"lua",
 				"javascript",
@@ -26,10 +28,20 @@ return {
 				"vim",
 				"vimdoc",
 				"query",
-			},
-			highlight = { enable = true },
-			indent = { enable = true },
-		},
+			})
+
+			vim.api.nvim_create_autocmd("FileType", {
+				callback = function(ev)
+					local lang = vim.treesitter.language.get_lang(ev.match)
+					if not lang or not pcall(vim.treesitter.start, ev.buf, lang) then
+						return
+					end
+					if vim.treesitter.query.get(lang, "indents") then
+						vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+					end
+				end,
+			})
+		end,
 	},
 
 	{
