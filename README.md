@@ -38,7 +38,7 @@ in `lua/plugins/lang.lua`.
 ## Quick start
 
 ```bash
-git clone <repo-url> ~/.config/nvim
+git clone https://github.com/Danylo37/nvim-config ~/.config/nvim
 nvim
 ```
 
@@ -50,7 +50,8 @@ progress indicator in the corner to disappear. From there:
 - `:checkhealth` — start here if something isn't working
 
 The dashboard opens by itself when you launch Neovim without a file — it also lists
-the hotkeys (`f`/`p`/`g`/`r`/`c`).
+its hotkeys: `f` files, `n` new file, `p` projects, `g` grep, `r` recent files,
+`c` config, `L` Lazy, `M` Mason, `q` quit.
 
 ## Structure
 
@@ -58,25 +59,25 @@ the hotkeys (`f`/`p`/`g`/`r`/`c`).
 init.lua                    -- entry point: options -> keymaps -> autocmds -> lazy.nvim bootstrap
 
 lua/config/
-  options.lua                -- vim.opt, indent, leader
-  keymaps.lua                -- EVERY keymap in the config, one file
-  autocmds.lua                -- indent overrides for lua/js/ts/html/css/json/yaml
+  options.lua               -- vim.opt, indent, leader
+  keymaps.lua               -- EVERY keymap in the config, one file
+  autocmds.lua              -- indent overrides for lua/js/ts/html/css/json/yaml
 
-lua/plugins/                 -- one file per plugin theme
-  lsp.lua                     -- mason, lspconfig, lspsaga, trouble
-  completion.lua               -- nvim-cmp, autopairs
-  editor.lua                  -- treesitter, flash, multicursor, harpoon, grug-far, conform
-  files.lua                   -- neo-tree
-  git.lua                     -- gitsigns
-  lang.lua                    -- venv-selector, jupytext, render-markdown
-  ai.lua                      -- windsurf, copilot, claudecode
-  terminal.lua                -- toggleterm
-  snacks.lua                  -- dashboard and its project picker
-  ui.lua                      -- theme, statusline, tabs, which-key, notifications, etc.
+lua/plugins/                -- one file per plugin theme
+  lsp.lua                   -- mason, lspconfig, lspsaga, trouble
+  completion.lua            -- nvim-cmp, autopairs
+  editor.lua                -- treesitter, flash, multicursor, harpoon, grug-far, conform, surround, comment
+  files.lua                 -- neo-tree
+  git.lua                   -- gitsigns
+  lang.lua                  -- venv-selector, jupytext, render-markdown
+  ai.lua                    -- windsurf, copilot, claudecode
+  terminal.lua              -- toggleterm, overseer
+  snacks.lua                -- dashboard, picker, input, image, lazygit
+  ui.lua                    -- theme, statusline, tabs, which-key, notifications, etc.
 
 lua/util/
-  init.lua                    -- project root lookup (util.root / util.find_root)
-  lsp_undo.lua                 -- undo multi-file LSP edits (<leader>ru)
+  init.lua                  -- project root lookup (util.root / util.find_root)
+  lsp_undo.lua              -- undo multi-file LSP edits (<leader>ru)
 ```
 
 ## Plugins
@@ -89,13 +90,15 @@ lua/util/
 | `lspsaga.nvim` | floating windows for definition/finder/rename/code action/line diagnostics |
 | `trouble.nvim` | persistent panel for diagnostics/references/quickfix at the bottom |
 | `conform.nvim` | formatting: stylua (Lua), ruff/black (Python), prettier (JS/TS/HTML/CSS/JSON/YAML/MD), sql_formatter |
-| `nvim-treesitter` | syntax highlighting and indent via parsers (pinned to `master`) |
+| `nvim-treesitter` | syntax highlighting and indent via parsers (`main` branch, wired by hand) |
 
-### Completion and AI
+### Completion, editing and AI
 | Plugin | What it's for |
 |---|---|
 | `nvim-cmp` + `cmp-nvim-lsp`/`cmp-buffer`/`cmp-path` | autocompletion |
 | `nvim-autopairs` | auto-closes brackets/quotes |
+| `vim-surround` | adds/changes/removes surrounding quotes and brackets (`ys`/`cs`/`ds`) |
+| `mini.comment` | comments lines and motions with `gc` |
 | `windsurf.vim` | inline AI suggestions, no monthly quota (`:Codeium Auth` once) |
 | `copilot.vim` | inline GitHub Copilot suggestions, installed but disabled by default |
 | `claudecode.nvim` | Claude Code inside the editor |
@@ -123,7 +126,7 @@ lua/util/
 | `jupytext.nvim` | opens `.ipynb` files as plain python |
 | `render-markdown.nvim` | renders markdown right in the buffer |
 
-### UI
+### UI and tools
 | Plugin | What it's for |
 |---|---|
 | `tokyonight.nvim` | color scheme |
@@ -135,6 +138,8 @@ lua/util/
 | `nvim-colorizer.lua` | highlights colors (`#fff`, `rgb(...)`) inline |
 | `noice.nvim` + `nvim-notify` | nicer cmdline and notifications |
 | `nvim-scrollbar` + `nvim-hlslens` | scrollbar with git/diagnostic/search marks, plus a match counter while searching |
+| `snacks.input` | floating replacement for `vim.ui.input` prompts |
+| `snacks.image` | inline image previews in the buffer and in the picker |
 | `toggleterm.nvim` | built-in terminal |
 | `overseer.nvim` | task runner: make/npm/cargo/shell tasks with a status list |
 | `snacks.terminal` | opens the `lazydocker` TUI in a float |
@@ -149,10 +154,11 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 |---|---|
 | `<Esc>` | Clear search highlight |
 | `n` / `N` | Next / previous search match (with counter) |
-| `*` / `#` | Search word under cursor |
+| `*` / `#` / `g*` / `g#` | Search word under cursor |
 | `<leader>R` | Save all and restart Neovim |
 | `<leader>F` | Format buffer |
 | `s` | Flash: jump to text |
+| `gc` / `gcc` | Comment a motion / the current line |
 
 ### Windows and buffers
 | Key | Action |
@@ -227,12 +233,14 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 | `<C-x>` | Skip match |
 | `<C-Up>` / `<C-Down>` | Add cursor above / below |
 | `<leader>ma` | Add cursor to every match |
+| `<C-LeftMouse>` | Add cursor with the mouse |
 | `<C-Left>` / `<C-Right>` / `<C-q>` | Navigate cursors (only while multiple cursors are active) |
 
 ### `<leader>t` — Terminal
 | Key | Action |
 |---|---|
 | `<C-\>` | Toggle terminal (from normal, insert, or terminal mode) |
+| `<C-q>` (terminal) | Leave terminal mode |
 | `<leader>tt` | Terminal at the bottom |
 | `<leader>tf` | Floating terminal |
 | `<leader>ts` | Select terminal |
