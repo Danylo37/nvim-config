@@ -31,6 +31,7 @@ return {
 					"stylua",
 					"black",
 					"ruff",
+					"sql-formatter",
 				},
 				run_on_start = true,
 			})
