@@ -259,6 +259,15 @@ for i = 1, 9 do
 	end, { desc = "Terminal " .. i })
 end
 
+-- Same treatment as lazygit: the binary in a snacks float, scoped to the root
+-- so docker-compose projects are picked up.
+map("n", "<leader>td", function()
+	require("snacks").terminal.toggle("lazydocker", {
+		cwd = util.root(),
+		win = { position = "float", border = "rounded" },
+	})
+end, { desc = "Lazydocker" })
+
 map("n", "<leader>tp", function()
 	vim.cmd("w")
 
