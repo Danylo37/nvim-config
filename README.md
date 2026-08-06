@@ -251,6 +251,10 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 | `<leader>ob` | Build a task interactively |
 | `<leader>oi` | Overseer debug info |
 
+`<leader>or`, `<leader>oa` and `<leader>ot` open a small numbered box — list only, no
+filter row: press `1`-`9` to run that entry outright, or `j`/`k` and `<CR>`. `/` brings
+up the filter if the list is long.
+
 ### `<leader>a` — AI / Claude
 | Key | Action |
 |---|---|

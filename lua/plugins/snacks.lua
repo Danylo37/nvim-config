@@ -43,6 +43,42 @@ local function pick_project()
 	})
 end
 
+--- Picker config for overseer's `vim.ui.select` prompts: a small box you pick
+--- from by number, like lspsaga's code action window. Opening focused on the
+--- list instead of the filter is what frees up 1-9; `n` matches the number
+--- snacks prints in front of an entry, not its row, so filtering first does
+--- not shift what a digit does.
+local function numbered_select()
+	local actions, keys = {}, {}
+
+	for n = 1, 9 do
+		local action = "confirm_" .. n
+
+		actions[action] = function(picker)
+			for row = 1, picker.list:count() do
+				local item = picker.list:get(row)
+
+				if item and item.idx == n then
+					picker.list:move(row, true)
+					picker:action("confirm")
+					return
+				end
+			end
+		end
+
+		keys[tostring(n)] = action
+	end
+
+	return {
+		focus = "list",
+		-- No filter row: the prompt is already the window title and the digits
+		-- do the picking, so the input would only take up a line.
+		layout = { preset = "select", hidden = { "input", "preview" } },
+		actions = actions,
+		win = { list = { keys = keys } },
+	}
+end
+
 return {
 	{
 		"folke/snacks.nvim",
@@ -66,6 +102,13 @@ return {
 					-- with nothing to preview.
 					select = {
 						layout = { preset = "default", hidden = { "preview" } },
+
+						-- Overseer tags its prompts with a `kind`, so only <leader>or,
+						-- <leader>oa and <leader>ot get the numbered box.
+						kinds = {
+							overseer_template = numbered_select(),
+							overseer_task_options = numbered_select(),
+						},
 					},
 				},
 			},
