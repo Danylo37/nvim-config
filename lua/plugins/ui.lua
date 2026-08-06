@@ -143,6 +143,20 @@ return {
 					lsp_doc_border = true,
 				},
 			})
+
+			-- noice routes every UI event by splitting its name on `_`. Nvim 0.12's
+			-- `restart` event has none, so `<leader>R` blows up inside noice's
+			-- ui_attach handler and spams an error popup. Skip what it can't parse.
+			local ui = require("noice.ui")
+			local get_handler = ui.get_handler
+
+			ui.get_handler = function(event, ...)
+				if not event:find("_", 1, true) then
+					return
+				end
+
+				return get_handler(event, ...)
+			end
 		end,
 	},
 
