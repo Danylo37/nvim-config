@@ -84,6 +84,44 @@ return {
 					}
 				end,
 			})
+
+			overseer.register_template({
+				name = "docker compose",
+				generator = function(search)
+					local compose = vim.fs.find({
+						"compose.yaml",
+						"compose.yml",
+						"docker-compose.yaml",
+						"docker-compose.yml",
+					}, { upward = true, type = "file", path = search.dir })[1]
+
+					if not compose then
+						return "No compose file found"
+					end
+
+					local cwd = vim.fs.dirname(compose)
+					local ret = {}
+
+					for _, args in ipairs({
+						{ "up" },
+						{ "up", "--build" },
+						{ "down" },
+						{ "down", "-v" },
+					}) do
+						local cmd = vim.list_extend({ "docker", "compose" }, args)
+
+						table.insert(ret, {
+							name = table.concat(cmd, " "),
+							desc = vim.fs.basename(compose),
+							builder = function()
+								return { cmd = cmd, cwd = cwd }
+							end,
+						})
+					end
+
+					return ret
+				end,
+			})
 		end,
 	},
 }
