@@ -61,6 +61,7 @@ return {
 				{ "<leader>g", group = "Git" },
 				{ "<leader>h", group = "Harpoon" },
 				{ "<leader>m", group = "Multicursor" },
+				{ "<leader>o", group = "Overseer / Tasks" },
 				{ "<leader>r", group = "Refactor" },
 				{ "<leader>s", group = "Search & Replace" },
 				{ "<leader>t", group = "Terminal" },

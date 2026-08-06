@@ -11,4 +11,79 @@ return {
 			},
 		},
 	},
+
+	{
+		"stevearc/overseer.nvim",
+		cmd = {
+			"OverseerRun",
+			"OverseerRunCmd",
+			"OverseerToggle",
+			"OverseerQuickAction",
+			"OverseerTaskAction",
+			"OverseerBuild",
+			"OverseerInfo",
+		},
+		opts = {
+			task_list = {
+				direction = "bottom",
+				bindings = {
+					-- Overseer's defaults shadow the window-nav and harpoon
+					-- mappings from config/keymaps.lua inside the task list.
+					["<C-h>"] = false,
+					["<C-j>"] = false,
+					["<C-k>"] = false,
+					["<C-l>"] = false,
+					["<C-e>"] = false,
+					["h"] = "DecreaseDetail",
+					["l"] = "IncreaseDetail",
+					["e"] = "Edit",
+					["<C-u>"] = "ScrollOutputUp",
+					["<C-d>"] = "ScrollOutputDown",
+				},
+			},
+		},
+		config = function(_, opts)
+			local overseer = require("overseer")
+
+			overseer.setup(opts)
+
+			-- Own templates go here, not in `template_dirs`: that option is broken
+			-- upstream — the loader matches module names against a hardcoded
+			-- "overseer/template/" path, so any other directory errors out.
+			--
+			-- A provider rather than a plain template because `condition` can only
+			-- match a filetype or a fixed path, and this should appear in every
+			-- project that has an `app/main.py`, wherever it lives.
+			overseer.register_template({
+				name = "uvicorn dev",
+				generator = function(search)
+					local pyproject =
+						vim.fs.find("pyproject.toml", { upward = true, type = "file", path = search.dir })[1]
+
+					if not pyproject then
+						return "No pyproject.toml found"
+					end
+
+					local cwd = vim.fs.dirname(pyproject)
+
+					if not vim.uv.fs_stat(vim.fs.joinpath(cwd, "app", "main.py")) then
+						return "No app/main.py found"
+					end
+
+					return {
+						{
+							name = "uvicorn dev",
+							desc = "uv run uvicorn app.main:app --reload",
+							builder = function()
+								return {
+									cmd = { "uv", "run", "uvicorn", "app.main:app", "--reload" },
+									cwd = cwd,
+								}
+							end,
+						},
+					}
+				end,
+			})
+		end,
+	},
 }

@@ -135,6 +135,7 @@ lua/util/
 | `noice.nvim` + `nvim-notify` | nicer cmdline and notifications |
 | `nvim-scrollbar` + `nvim-hlslens` | scrollbar with git/diagnostic/search marks, plus a match counter while searching |
 | `toggleterm.nvim` | built-in terminal |
+| `overseer.nvim` | task runner: make/npm/cargo/shell tasks with a status list |
 
 ## Keymaps
 
@@ -235,6 +236,17 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 | `<leader>ts` | Select terminal |
 | `<leader>t1..9` | Terminal by number |
 | `<leader>tp` | Run the current python file in a terminal |
+
+### `<leader>o` — Overseer / Tasks
+| Key | Action |
+|---|---|
+| `<leader>oo` | Toggle the task list |
+| `<leader>or` | Run a task from a template (make, npm, cargo, …) |
+| `<leader>oc` | Run a shell command as a task |
+| `<leader>oa` | Action on the most recent task (restart, stop, open output) |
+| `<leader>ot` | Action on a task picked from the list |
+| `<leader>ob` | Build a task interactively |
+| `<leader>oi` | Overseer debug info |
 
 ### `<leader>a` — AI / Claude
 | Key | Action |

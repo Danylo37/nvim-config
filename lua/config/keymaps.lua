@@ -15,7 +15,7 @@
 --   <leader>f  Find / files      <leader>v  Venv
 --   <leader>g  Git               <leader>x  Diagnostics
 --   <leader>h  Harpoon           <leader>m  Multicursor
---   <leader>r  Refactor
+--   <leader>r  Refactor          <leader>o  Overseer / tasks
 
 local map = vim.keymap.set
 local util = require("util")
@@ -271,6 +271,16 @@ map("n", "<leader>tp", function()
 	vim.fn.chansend(vim.b.terminal_job_id, "cd '" .. dir .. "'\n")
 	vim.fn.chansend(vim.b.terminal_job_id, "python '" .. file .. "'\n")
 end, { desc = "Run current python file" })
+
+-- ------------------------------------------------------ overseer / tasks ---
+
+map("n", "<leader>oo", "<cmd>OverseerToggle<CR>", { desc = "Toggle task list" })
+map("n", "<leader>or", "<cmd>OverseerRun<CR>", { desc = "Run task from template" })
+map("n", "<leader>oc", "<cmd>OverseerRunCmd<CR>", { desc = "Run shell command as task" })
+map("n", "<leader>oa", "<cmd>OverseerQuickAction<CR>", { desc = "Action on the last task" })
+map("n", "<leader>ot", "<cmd>OverseerTaskAction<CR>", { desc = "Action on a picked task" })
+map("n", "<leader>ob", "<cmd>OverseerBuild<CR>", { desc = "Build a task" })
+map("n", "<leader>oi", "<cmd>OverseerInfo<CR>", { desc = "Overseer info" })
 
 -- ------------------------------------------------------------ ai / claude ---
 
