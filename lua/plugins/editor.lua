@@ -105,7 +105,13 @@ return {
 	{
 		"MagicDuck/grug-far.nvim",
 		cmd = "GrugFar",
-		opts = { headerMaxWidth = 80 },
+		opts = {
+			headerMaxWidth = 80,
+			keymaps = {
+				close = { n = "q" },
+				abort = { n = "<localleader>B" },
+			},
+		},
 	},
 
 	{
