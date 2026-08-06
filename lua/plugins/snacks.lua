@@ -100,6 +100,13 @@ return {
 					-- Same wide window as every other picker, minus the preview pane:
 					-- select items (overseer tasks, code actions) are plain strings
 					-- with nothing to preview.
+					-- Every project is its own git root, so snacks' path shortener
+					-- collapses the whole path to "⋮<name>". The name alone is all
+					-- that column ever shows here, so drop the marker with it.
+					projects = {
+						formatters = { file = { filename_only = true } },
+					},
+
 					select = {
 						layout = { preset = "default", hidden = { "preview" } },
 

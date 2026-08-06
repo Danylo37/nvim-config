@@ -1,7 +1,24 @@
 return {
 	{
 		"folke/tokyonight.nvim",
-		config = function()
+		opts = {
+			on_highlights = function(hl, c)
+				-- Pickers sit on the editor background instead of the darker
+				-- `bg_float` one. The base groups cover most of it — snacks links
+				-- its per-window groups (List/Box/Preview) to them — except the
+				-- three tokyonight pins to `bg_float` itself, which are the input
+				-- border and the window titles.
+				hl.SnacksPicker = { fg = c.fg, bg = c.bg }
+				hl.SnacksPickerBorder = { fg = c.border_highlight, bg = c.bg }
+				hl.SnacksPickerTitle = { fg = c.border_highlight, bg = c.bg }
+				hl.SnacksPickerFooter = { fg = c.border_highlight, bg = c.bg }
+				hl.SnacksPickerInputBorder = { fg = c.orange, bg = c.bg }
+				hl.SnacksPickerInputTitle = { fg = c.orange, bg = c.bg }
+				hl.SnacksPickerBoxTitle = { fg = c.orange, bg = c.bg }
+			end,
+		},
+		config = function(_, opts)
+			require("tokyonight").setup(opts)
 			vim.cmd.colorscheme("tokyonight-night")
 		end,
 	},
