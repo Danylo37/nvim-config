@@ -104,6 +104,7 @@ lua/util/
 | Plugin | What it's for |
 |---|---|
 | `telescope.nvim` | the one picker: files, grep, buffers, colorschemes |
+| `telescope-ui-select.nvim` | makes `vim.ui.select` prompts (overseer tasks, code actions) telescope dropdowns |
 | `neo-tree.nvim` | file tree |
 | `harpoon` (branch `harpoon2`) | quick bookmarks for up to 6 files |
 | `flash.nvim` | jump to visible text (`s`) |
