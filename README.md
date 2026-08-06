@@ -1,7 +1,7 @@
 # nvim-config
 
 Personal Neovim config on [lazy.nvim](https://github.com/folke/lazy.nvim): LSP out of
-the box for Python/TS/JS/HTML/CSS/Lua/SQL, telescope as the single picker, a dashboard
+the box for Python/TS/JS/HTML/CSS/Lua/SQL, snacks.picker as the picker, a dashboard
 with recent projects, AI assistants (Windsurf + Claude Code), and every keymap in one file.
 
 ## Table of contents
@@ -21,8 +21,8 @@ with recent projects, AI assistants (Windsurf + Claude Code), and every keymap i
 | Neovim **0.11+** | yes | uses `vim.lsp.config`/`vim.lsp.enable`, `vim.diagnostic.jump` — none of these exist before 0.11 | the config won't start |
 | `git` | yes | lazy.nvim installs and updates plugins via `git clone` | nothing to install plugins with |
 | C compiler (`cc`/`gcc`/`clang`) | yes | treesitter builds parsers from source on `:TSUpdate` | syntax highlighting and treesitter-based indent won't work |
-| [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) | yes | telescope needs it for `live_grep` | `<leader>fg`, `<leader>sr`, and other search stop working |
-| [fd](https://github.com/sharkdp/fd) | yes | fast file search for telescope and venv-selector | venv won't auto-discover itself, `find_files` falls back to something slow or breaks |
+| [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) | yes | snacks.picker needs it for `<leader>fg` | `<leader>fg`, `<leader>sr`, and other search stop working |
+| [fd](https://github.com/sharkdp/fd) | yes | fast file search for snacks.picker and venv-selector | venv won't auto-discover itself, `find_files` falls back to something slow or breaks |
 | Node.js + npm | yes | Mason installs `ts_ls`, `prettier`, `sqls`, etc. through it | some LSP servers and formatters won't install |
 | [lazygit](https://github.com/jesseduffield/lazygit) | no | the git TUI behind `<leader>gg` / `<leader>gl` / `<leader>gf` | those three mappings error out; gitsigns still works |
 | [lazydocker](https://github.com/jesseduffield/lazydocker) | no | the docker TUI behind `<leader>td` | that mapping opens an empty terminal |
@@ -66,7 +66,7 @@ lua/plugins/                 -- one file per plugin theme
   lsp.lua                     -- mason, lspconfig, lspsaga, trouble
   completion.lua               -- nvim-cmp, autopairs
   editor.lua                  -- treesitter, flash, multicursor, harpoon, grug-far, conform
-  files.lua                   -- neo-tree, telescope
+  files.lua                   -- neo-tree
   git.lua                     -- gitsigns
   lang.lua                    -- venv-selector, jupytext, render-markdown
   ai.lua                      -- windsurf, copilot, claudecode
@@ -103,8 +103,7 @@ lua/util/
 ### Navigation and search
 | Plugin | What it's for |
 |---|---|
-| `telescope.nvim` | the one picker: files, grep, buffers, colorschemes |
-| `telescope-ui-select.nvim` | makes `vim.ui.select` prompts (overseer tasks, code actions) telescope dropdowns |
+| `snacks.picker` | the one picker: files, grep, buffers, colorschemes, projects, and every `vim.ui.select` prompt |
 | `neo-tree.nvim` | file tree |
 | `harpoon` (branch `harpoon2`) | quick bookmarks for up to 6 files |
 | `flash.nvim` | jump to visible text (`s`) |

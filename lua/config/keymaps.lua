@@ -119,19 +119,19 @@ end, { desc = "Add cursor with mouse" })
 -- ---------------------------------------------------------- find / files ----
 
 map("n", "<leader>ff", function()
-	require("telescope.builtin").find_files()
+	Snacks.picker.files()
 end, { desc = "Find files" })
 
 map("n", "<leader>fg", function()
-	require("telescope.builtin").live_grep()
+	Snacks.picker.grep()
 end, { desc = "Live grep" })
 
 map("n", "<leader>fb", function()
-	require("telescope.builtin").buffers()
+	Snacks.picker.buffers()
 end, { desc = "Buffers" })
 
 map("n", "<leader>fh", function()
-	require("telescope.builtin").help_tags()
+	Snacks.picker.help()
 end, { desc = "Help tags" })
 
 map("n", "<leader>e", function()
@@ -315,7 +315,7 @@ map("n", "<leader>am", "<cmd>ClaudeCodeSelectModel<CR>", { desc = "Select Claude
 -- ------------------------------------------------------------------- misc ---
 
 map("n", "<leader>ut", function()
-	require("telescope.builtin").colorscheme({ enable_preview = true })
+	Snacks.picker.colorschemes()
 end, { desc = "Choose theme" })
 
 map("n", "<leader>uc", "<cmd>ColorizerToggle<CR>", { desc = "Toggle colorizer" })

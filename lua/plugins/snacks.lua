@@ -22,75 +22,25 @@ local function recent_project_dirs(limit)
 	return dirs
 end
 
---- Recent projects plus anything with a project marker under `dev_dirs`.
-local function all_project_dirs()
-	local dirs = recent_project_dirs(10)
-	local seen = {}
-
-	for _, dir in ipairs(dirs) do
-		seen[dir] = true
-	end
-
-	for _, dev in ipairs(dev_dirs) do
-		if vim.uv.fs_stat(dev) then
-			-- Depth 4, matching the snacks built-in project picker this replaced,
-			-- so a project can sit several grouping folders deep (e.g. work/client/repo).
-			for name, kind in vim.fs.dir(dev, { depth = 4 }) do
-				if kind == "directory" then
-					local path = vim.fs.normalize(dev .. "/" .. name)
-
-					if not seen[path] and util.find_root(path) == path then
-						seen[path] = true
-						dirs[#dirs + 1] = path
-					end
-				end
-			end
-		end
-	end
-
-	return dirs
-end
-
---- Telescope picker over `all_project_dirs`: cd into the pick, then find files.
+--- Recent projects plus anything with a project marker under `dev_dirs`, in
+--- snacks' own project picker. Picking one cd's into it and opens a file picker.
 local function pick_project()
-	local pickers = require("telescope.pickers")
-	local finders = require("telescope.finders")
-	local conf = require("telescope.config").values
-	local actions = require("telescope.actions")
-	local action_state = require("telescope.actions.state")
-
-	pickers
-		.new({}, {
-			prompt_title = "Projects",
-
-			finder = finders.new_table({
-				results = all_project_dirs(),
-				entry_maker = function(dir)
-					return {
-						value = dir,
-						display = vim.fn.fnamemodify(dir, ":~"),
-						ordinal = dir,
-					}
-				end,
-			}),
-
-			sorter = conf.generic_sorter({}),
-
-			attach_mappings = function(bufnr)
-				actions.select_default:replace(function()
-					local entry = action_state.get_selected_entry()
-					actions.close(bufnr)
-
-					if entry then
-						vim.fn.chdir(entry.value)
-						require("telescope.builtin").find_files({ cwd = entry.value })
-					end
-				end)
-
-				return true
-			end,
-		})
-		:find()
+	Snacks.picker.projects({
+		dev = dev_dirs,
+		-- A project can sit several grouping folders deep (e.g. work/client/repo).
+		max_depth = 4,
+		patterns = {
+			".git",
+			"_darcs",
+			".hg",
+			".bzr",
+			".svn",
+			"package.json",
+			"Makefile",
+			".venv",
+			"venv",
+		},
+	})
 end
 
 return {
@@ -99,8 +49,26 @@ return {
 		priority = 1000,
 		lazy = false,
 		opts = {
-			-- Telescope is the picker for this config; snacks only does UI bits.
-			picker = { enabled = false },
+			-- The picker for everything: files, grep, buffers, the dashboard keys
+			-- and, through `ui_select`, `vim.ui.select`.
+			--
+			-- `ui_select` matters beyond looks: left to Nvim, `vim.ui.select` is
+			-- `inputlist()` — it prints the choices as a message and reads keys from
+			-- the cmdline, which noice mirrors into a Confirm popup, so the list is
+			-- drawn twice and keypresses go to the prompt hidden behind it.
+			picker = {
+				enabled = true,
+				ui_select = true,
+
+				sources = {
+					-- Same wide window as every other picker, minus the preview pane:
+					-- select items (overseer tasks, code actions) are plain strings
+					-- with nothing to preview.
+					select = {
+						layout = { preset = "default", hidden = { "preview" } },
+					},
+				},
+			},
 			input = { enabled = true },
 			image = { enabled = true },
 
@@ -142,7 +110,7 @@ return {
 							key = "f",
 							desc = "Find File",
 							action = function()
-								require("telescope.builtin").find_files()
+								Snacks.picker.files()
 							end,
 						},
 						{ icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
@@ -157,7 +125,7 @@ return {
 							key = "g",
 							desc = "Find Text",
 							action = function()
-								require("telescope.builtin").live_grep()
+								Snacks.picker.grep()
 							end,
 						},
 						{
@@ -165,7 +133,7 @@ return {
 							key = "r",
 							desc = "Recent Files",
 							action = function()
-								require("telescope.builtin").oldfiles()
+								Snacks.picker.recent()
 							end,
 						},
 						{
@@ -173,7 +141,7 @@ return {
 							key = "c",
 							desc = "Config",
 							action = function()
-								require("telescope.builtin").find_files({ cwd = vim.fn.stdpath("config") })
+								Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
 							end,
 						},
 						{

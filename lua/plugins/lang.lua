@@ -23,7 +23,7 @@ return {
 		"linux-cultist/venv-selector.nvim",
 		dependencies = {
 			"neovim/nvim-lspconfig",
-			"nvim-telescope/telescope.nvim",
+			"folke/snacks.nvim",
 		},
 		cmd = { "VenvSelect", "VenvSelectCached" },
 		-- Also load on `ft = "python"`: setup() registers the plugin's own
@@ -36,6 +36,10 @@ return {
 			stay_on_this_version = true,
 			options = {
 				override_notify = false,
+				-- Its `auto` order prefers telescope, then fzf-lua, then snacks, and
+				-- falls back to a plain `inputlist()`. Name it so `<leader>vs` opens
+				-- the same window as every other picker.
+				picker = "snacks",
 			},
 		},
 	},
