@@ -1,10 +1,19 @@
 return {
 	{
+		-- Primary inline completion: free, no monthly quota. Run `:Codeium Auth` once.
+		"Exafunction/windsurf.vim",
+		init = function()
+			vim.g.codeium_disable_bindings = 1
+		end,
+	},
+
+	{
+		-- Kept installed but off: the free tier is capped at 2000 completions/month.
+		-- `:Copilot enable` turns it back on, <Tab> then prefers its suggestion.
 		"github/copilot.vim",
 		init = function()
-			-- Tab is left alone; suggestions are accepted with <C-y>.
 			vim.g.copilot_no_tab_map = true
-			vim.g.copilot_enabled = true
+			vim.g.copilot_enabled = false
 			vim.g.copilot_assume_mapped = true
 			vim.g.copilot_tab_fallback = ""
 		end,

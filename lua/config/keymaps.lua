@@ -274,10 +274,17 @@ end, { desc = "Run current python file" })
 
 -- ------------------------------------------------------------ ai / claude ---
 
-map("i", "<C-y>", 'copilot#Accept("<CR>")', {
+-- Windsurf drives inline suggestions; Copilot wins only while explicitly enabled.
+map("i", "<Tab>", function()
+	if vim.g.copilot_enabled and vim.fn["copilot#GetDisplayedSuggestion"]().text ~= "" then
+		return vim.fn["copilot#Accept"]("\t")
+	end
+	return vim.fn["codeium#Accept"]()
+end, {
 	expr = true,
 	replace_keycodes = false,
-	desc = "Accept Copilot suggestion",
+	silent = true,
+	desc = "Accept AI suggestion",
 })
 
 map("n", "<leader>aa", "<cmd>ClaudeCode<CR>", { desc = "Claude Code" })

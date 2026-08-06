@@ -2,7 +2,7 @@
 
 Personal Neovim config on [lazy.nvim](https://github.com/folke/lazy.nvim): LSP out of
 the box for Python/TS/JS/HTML/CSS/Lua/SQL, telescope as the single picker, a dashboard
-with recent projects, AI assistants (Copilot + Claude Code), and every keymap in one file.
+with recent projects, AI assistants (Windsurf + Claude Code), and every keymap in one file.
 
 ## Table of contents
 
@@ -68,7 +68,7 @@ lua/plugins/                 -- one file per plugin theme
   files.lua                   -- neo-tree, telescope
   git.lua                     -- gitsigns
   lang.lua                    -- venv-selector, jupytext, render-markdown
-  ai.lua                      -- copilot, claudecode
+  ai.lua                      -- windsurf, copilot, claudecode
   terminal.lua                -- toggleterm
   snacks.lua                  -- dashboard and its project picker
   ui.lua                      -- theme, statusline, tabs, which-key, notifications, etc.
@@ -95,7 +95,8 @@ lua/util/
 |---|---|
 | `nvim-cmp` + `cmp-nvim-lsp`/`cmp-buffer`/`cmp-path` | autocompletion |
 | `nvim-autopairs` | auto-closes brackets/quotes |
-| `copilot.vim` | inline GitHub Copilot suggestions |
+| `windsurf.vim` | inline AI suggestions, no monthly quota (`:Codeium Auth` once) |
+| `copilot.vim` | inline GitHub Copilot suggestions, installed but disabled by default |
 | `claudecode.nvim` | Claude Code inside the editor |
 
 ### Navigation and search
@@ -238,7 +239,7 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 ### `<leader>a` — AI / Claude
 | Key | Action |
 |---|---|
-| `<C-y>` (insert) | Accept Copilot suggestion |
+| `<Tab>` (insert) | Accept AI suggestion (Windsurf, or Copilot when enabled) |
 | `<leader>aa` | Open Claude Code (or send selection) |
 | `<leader>af` | Focus Claude window |
 | `<leader>ab` | Add current file to Claude's context |
