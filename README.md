@@ -256,8 +256,6 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 | `<leader>oc` | Run a shell command as a task |
 | `<leader>oa` | Action on the most recent task (restart, stop, open output) |
 | `<leader>ot` | Action on a task picked from the list |
-| `<leader>ob` | Build a task interactively |
-| `<leader>oi` | Overseer debug info |
 
 `<leader>or`, `<leader>oa` and `<leader>ot` open a small numbered box — list only, no
 filter row: press `1`-`9` to run that entry outright, or `j`/`k` and `<CR>`. `/` brings
@@ -267,6 +265,7 @@ up the filter if the list is long.
 | Key | Action |
 |---|---|
 | `<Tab>` (insert) | Accept AI suggestion (Windsurf, or Copilot when enabled) |
+| `<leader>ua` | Toggle inline completion (off silences both engines) |
 | `<leader>aa` | Open Claude Code (or send selection) |
 | `<leader>af` | Focus Claude window |
 | `<leader>ab` | Add current file to Claude's context |

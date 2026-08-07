@@ -15,13 +15,12 @@ return {
 	{
 		"stevearc/overseer.nvim",
 		cmd = {
-			"OverseerRun",
-			"OverseerRunCmd",
+			"OverseerOpen",
+			"OverseerClose",
 			"OverseerToggle",
-			"OverseerQuickAction",
+			"OverseerRun",
+			"OverseerShell",
 			"OverseerTaskAction",
-			"OverseerBuild",
-			"OverseerInfo",
 		},
 		opts = {
 			task_list = {

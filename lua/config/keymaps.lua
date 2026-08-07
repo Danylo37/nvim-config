@@ -194,8 +194,8 @@ map("n", "<leader>xl", "<cmd>Trouble loclist toggle<CR>", { desc = "Loclist" })
 
 -- -------------------------------------------------------------------- git ---
 
-map("n", "]h", "<cmd>Gitsigns next_hunk<CR>", { desc = "Next hunk" })
-map("n", "[h", "<cmd>Gitsigns prev_hunk<CR>", { desc = "Previous hunk" })
+map("n", "]h", "<cmd>Gitsigns nav_hunk next<CR>", { desc = "Next hunk" })
+map("n", "[h", "<cmd>Gitsigns nav_hunk prev<CR>", { desc = "Previous hunk" })
 
 map("n", "<leader>gs", "<cmd>Gitsigns stage_hunk<CR>", { desc = "Stage hunk" })
 map("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<CR>", { desc = "Reset hunk" })
@@ -285,11 +285,22 @@ end, { desc = "Run current python file" })
 
 map("n", "<leader>oo", "<cmd>OverseerToggle<CR>", { desc = "Toggle task list" })
 map("n", "<leader>or", "<cmd>OverseerRun<CR>", { desc = "Run task from template" })
-map("n", "<leader>oc", "<cmd>OverseerRunCmd<CR>", { desc = "Run shell command as task" })
-map("n", "<leader>oa", "<cmd>OverseerQuickAction<CR>", { desc = "Action on the last task" })
+map("n", "<leader>oc", "<cmd>OverseerShell<CR>", { desc = "Run shell command as task" })
 map("n", "<leader>ot", "<cmd>OverseerTaskAction<CR>", { desc = "Action on a picked task" })
-map("n", "<leader>ob", "<cmd>OverseerBuild<CR>", { desc = "Build a task" })
-map("n", "<leader>oi", "<cmd>OverseerInfo<CR>", { desc = "Overseer info" })
+
+-- Stands in for :OverseerQuickAction, dropped in overseer 2.0 along with
+-- :OverseerBuild and :OverseerInfo (the latter is now `:checkhealth overseer`).
+map("n", "<leader>oa", function()
+	local task_list = require("overseer.task_list")
+	local task = task_list.list_tasks({ sort = task_list.sort_newest_first })[1]
+
+	if not task then
+		vim.notify("No overseer tasks", vim.log.levels.WARN)
+		return
+	end
+
+	require("overseer").run_action(task)
+end, { desc = "Action on the last task" })
 
 -- ------------------------------------------------------------ ai / claude ---
 
@@ -305,6 +316,24 @@ end, {
 	silent = true,
 	desc = "Accept AI suggestion",
 })
+
+-- Kills suggestions from both engines at once, so the state matches what <Tab>
+-- above actually reads. Turning them back on restores Windsurf only — Copilot
+-- stays where it belongs, off until `:Copilot enable`.
+map("n", "<leader>ua", function()
+	local on = vim.g.codeium_enabled ~= false or vim.g.copilot_enabled == true
+
+	if on then
+		vim.cmd("CodeiumDisable")
+		if vim.g.copilot_enabled then
+			vim.cmd("Copilot disable")
+		end
+	else
+		vim.cmd("CodeiumEnable")
+	end
+
+	vim.notify("Inline completion " .. (on and "off" or "on"))
+end, { desc = "Toggle inline completion" })
 
 map("n", "<leader>aa", "<cmd>ClaudeCode<CR>", { desc = "Claude Code" })
 map("x", "<leader>aa", "<cmd>ClaudeCodeSend<CR>", { desc = "Send selection to Claude" })

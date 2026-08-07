@@ -115,6 +115,7 @@ return {
 						-- <leader>oa and <leader>ot get the numbered box.
 						kinds = {
 							overseer_template = numbered_select(),
+							overseer_task = numbered_select(),
 							overseer_task_options = numbered_select(),
 						},
 					},

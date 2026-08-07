@@ -25,7 +25,7 @@ return {
 			"neovim/nvim-lspconfig",
 			"folke/snacks.nvim",
 		},
-		cmd = { "VenvSelect", "VenvSelectCached" },
+		cmd = "VenvSelect",
 		-- Also load on `ft = "python"`: setup() registers the plugin's own
 		-- BufReadPost/FileType autocmds that restore a workspace's cached venv,
 		-- but only once setup() has actually run. Gated on `cmd` alone, that
