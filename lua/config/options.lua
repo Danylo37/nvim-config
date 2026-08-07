@@ -2,6 +2,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 vim.opt.number = true
+vim.opt.signcolumn = "yes:1"
 vim.opt.termguicolors = true
 vim.opt.splitright = true
 vim.opt.clipboard = "unnamedplus"

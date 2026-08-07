@@ -26,6 +26,7 @@ with recent projects, AI assistants (Windsurf + Claude Code), and every keymap i
 | Node.js + npm | yes | Mason installs `ts_ls`, `prettier`, `sqls`, etc. through it | some LSP servers and formatters won't install |
 | [lazygit](https://github.com/jesseduffield/lazygit) | no | the git TUI behind `<leader>gg` / `<leader>gl` / `<leader>gf` | those three mappings error out; gitsigns still works |
 | [lazydocker](https://github.com/jesseduffield/lazydocker) | no | the docker TUI behind `<leader>td` | that mapping opens an empty terminal |
+| [lazysql](https://github.com/jorgerojas26/lazysql) | no | the database TUI behind `<leader>tl` | that mapping opens an empty terminal |
 | [Nerd Font](https://www.nerdfonts.com/) in your terminal | no | icons in the dashboard, file tree, statusline, git/diagnostic signs | icons show as blank boxes or garbled glyphs; nothing else breaks |
 | Python 3 + `pip` | no, but needed for Python projects | `basedpyright`/`ruff`/`black` don't need a system Python themselves, but project venvs do | venv-selector (`<leader>vs`) has nothing to find |
 
@@ -142,7 +143,7 @@ lua/util/
 | `snacks.image` | inline image previews in the buffer and in the picker |
 | `toggleterm.nvim` | built-in terminal |
 | `overseer.nvim` | task runner: make/npm/cargo/shell tasks with a status list |
-| `snacks.terminal` | opens the `lazydocker` TUI in a float |
+| `snacks.terminal` | opens the `lazydocker` and `lazysql` TUIs in a float |
 
 ## Keymaps
 
@@ -246,6 +247,7 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 | `<leader>ts` | Select terminal |
 | `<leader>t1..9` | Terminal by number |
 | `<leader>td` | Lazydocker (project root) |
+| `<leader>tl` | Lazysql |
 | `<leader>tp` | Run the current python file in a terminal |
 
 ### `<leader>o` — Overseer / Tasks

@@ -268,6 +268,14 @@ map("n", "<leader>td", function()
 	})
 end, { desc = "Lazydocker" })
 
+-- No `cwd`: lazysql takes its connections from its own config file, not the
+-- project.
+map("n", "<leader>tl", function()
+	require("snacks").terminal.toggle("lazysql", {
+		win = { position = "float", border = "rounded" },
+	})
+end, { desc = "Lazysql" })
+
 map("n", "<leader>tp", function()
 	vim.cmd("w")
 
