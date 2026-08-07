@@ -253,7 +253,7 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 |---|---|
 | `<leader>oo` | Toggle the task list |
 | `<leader>or` | Run a task from a template (make, npm, cargo, …) |
-| `<leader>oc` | Run a shell command as a task |
+| `<leader>oc` | Run a shell command as a task (project root) |
 | `<leader>oa` | Action on the most recent task (restart, stop, open output) |
 | `<leader>ot` | Action on a task picked from the list |
 

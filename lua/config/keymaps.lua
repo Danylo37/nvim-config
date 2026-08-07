@@ -285,8 +285,18 @@ end, { desc = "Run current python file" })
 
 map("n", "<leader>oo", "<cmd>OverseerToggle<CR>", { desc = "Toggle task list" })
 map("n", "<leader>or", "<cmd>OverseerRun<CR>", { desc = "Run task from template" })
-map("n", "<leader>oc", "<cmd>OverseerShell<CR>", { desc = "Run shell command as task" })
 map("n", "<leader>ot", "<cmd>OverseerTaskAction<CR>", { desc = "Action on a picked task" })
+
+-- Same prompt :OverseerShell puts up, but that command leaves `cwd` unset and
+-- overseer then falls back to `getcwd()` — the one launcher here not scoped to
+-- the project, unlike the terminals, lazygit and lazydocker.
+map("n", "<leader>oc", function()
+	vim.ui.input({ prompt = "command", completion = "shellcmdline" }, function(cmd)
+		if cmd and cmd ~= "" then
+			require("overseer").new_task({ cmd = cmd, cwd = util.root() }):start()
+		end
+	end)
+end, { desc = "Run shell command as task" })
 
 -- Stands in for :OverseerQuickAction, dropped in overseer 2.0 along with
 -- :OverseerBuild and :OverseerInfo (the latter is now `:checkhealth overseer`).
