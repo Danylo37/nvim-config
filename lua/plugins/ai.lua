@@ -32,6 +32,9 @@ return {
 			"ClaudeCodeSelectModel",
 		},
 		opts = {
+			-- Args from `:ClaudeCode <args>` are appended to this string, so the
+			-- mappings in config/keymaps.lua can add --continue on top of it.
+			terminal_cmd = "claude --permission-mode auto",
 			terminal = {
 				git_repo_cwd = true,
 			},

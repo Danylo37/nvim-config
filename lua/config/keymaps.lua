@@ -362,7 +362,10 @@ map("n", "<leader>ua", function()
 	vim.notify("Inline completion " .. (on and "off" or "on"))
 end, { desc = "Toggle inline completion" })
 
-map("n", "<leader>aa", "<cmd>ClaudeCode<CR>", { desc = "Claude Code" })
+-- --continue picks up the last conversation in this directory; with none to
+-- resume claude exits with an error, so <leader>an starts a fresh one.
+map("n", "<leader>aa", "<cmd>ClaudeCode --continue<CR>", { desc = "Claude Code (last session)" })
+map("n", "<leader>an", "<cmd>ClaudeCode<CR>", { desc = "Claude Code (new session)" })
 map("x", "<leader>aa", "<cmd>ClaudeCodeSend<CR>", { desc = "Send selection to Claude" })
 map("n", "<leader>af", "<cmd>ClaudeCodeFocus<CR>", { desc = "Focus Claude" })
 map("n", "<leader>ab", "<cmd>ClaudeCodeAdd %<CR>", { desc = "Add current file to Claude" })

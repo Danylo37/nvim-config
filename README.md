@@ -103,7 +103,7 @@ lua/util/
 | `todo-comments.nvim` | highlights `TODO:`/`FIXME:`/`NOTE:` and lists them project-wide |
 | `windsurf.vim` | inline AI suggestions, no monthly quota (`:Codeium Auth` once) |
 | `copilot.vim` | inline GitHub Copilot suggestions, installed but disabled by default |
-| `claudecode.nvim` | Claude Code inside the editor |
+| `claudecode.nvim` | Claude Code inside the editor, started with `--permission-mode auto` |
 
 ### Navigation and search
 | Plugin | What it's for |
@@ -278,7 +278,8 @@ tasks stopped by hand.
 |---|---|
 | `<Tab>` (insert) | Accept AI suggestion (Windsurf, or Copilot when enabled) |
 | `<leader>ua` | Toggle inline completion (off silences both engines) |
-| `<leader>aa` | Open Claude Code (or send selection) |
+| `<leader>aa` | Resume the last Claude Code session in this directory (or send selection) |
+| `<leader>an` | Start a new Claude Code session |
 | `<leader>af` | Focus Claude window |
 | `<leader>ab` | Add current file to Claude's context |
 | `<leader>am` | Select Claude model |
