@@ -68,6 +68,39 @@ return {
 	},
 
 	{
+		-- Wordlists of programming jargon, compiled together with this repo's
+		-- spell/programming.words into a `programming` entry for 'spelllang', so
+		-- spell checking identifiers doesn't flag `args` or `kubectl` as typos.
+		-- The plugin is never loaded: only its `wordlists/` are used. Its own
+		-- :DirtytalkUpdate is dead on Neovim 0.12 (it calls
+		-- spellfile#WritableSpellDir(), gone with runtime/spellfile.vim), so the
+		-- spell file is built here. Rerun with `:Lazy build vim-dirtytalk`.
+		"psliwka/vim-dirtytalk",
+		lazy = true,
+		build = function(plugin)
+			local files = vim.fn.glob(plugin.dir .. "/wordlists/*.words", true, true)
+			table.insert(files, vim.fn.stdpath("config") .. "/spell/programming.words")
+
+			local words = {}
+			for _, file in ipairs(files) do
+				if vim.fn.filereadable(file) == 1 then
+					for _, line in ipairs(vim.fn.readfile(file)) do
+						if line ~= "" and not vim.startswith(line, "#") then
+							table.insert(words, line)
+						end
+					end
+				end
+			end
+
+			local dir = vim.fn.stdpath("data") .. "/site/spell"
+			local input = vim.fn.tempname()
+			vim.fn.mkdir(dir, "p")
+			vim.fn.writefile(words, input)
+			vim.cmd.mkspell({ args = { dir .. "/programming", input }, bang = true })
+		end,
+	},
+
+	{
 		"folke/flash.nvim",
 		event = "VeryLazy",
 		opts = {

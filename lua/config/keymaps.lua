@@ -379,4 +379,9 @@ end, { desc = "Choose theme" })
 
 map("n", "<leader>uc", "<cmd>ColorizerToggle<CR>", { desc = "Toggle colorizer" })
 
+map("n", "<leader>us", function()
+	vim.opt_local.spell = not vim.opt_local.spell:get()
+	vim.notify("Spell " .. (vim.wo.spell and "on" or "off"))
+end, { desc = "Toggle spell check" })
+
 map("n", "<leader>vs", "<cmd>VenvSelect<CR>", { desc = "Select Python venv" })

@@ -67,7 +67,7 @@ lua/config/
 lua/plugins/                -- one file per plugin theme
   lsp.lua                   -- mason, lspconfig, lspsaga, trouble
   completion.lua            -- nvim-cmp, autopairs
-  editor.lua                -- treesitter, flash, multicursor, harpoon, grug-far, conform, surround, comment
+  editor.lua                -- treesitter, flash, multicursor, harpoon, grug-far, conform, surround, comment, todo-comments, dirtytalk
   files.lua                 -- neo-tree
   git.lua                   -- gitsigns
   lang.lua                  -- venv-selector, jupytext, render-markdown
@@ -79,6 +79,10 @@ lua/plugins/                -- one file per plugin theme
 lua/util/
   init.lua                  -- project root lookup (util.root / util.find_root)
   lsp_undo.lua              -- undo multi-file LSP edits (<leader>ru)
+
+after/queries/              -- `(identifier) @spell`: which names the spell checker reads
+spell/
+  programming.words         -- extra dictionary words, compiled into `programming`
 ```
 
 ## Plugins
@@ -101,6 +105,7 @@ lua/util/
 | `vim-surround` | adds/changes/removes surrounding quotes and brackets (`ys`/`cs`/`ds`) |
 | `mini.comment` | comments lines and motions with `gc` |
 | `todo-comments.nvim` | highlights `TODO:`/`FIXME:`/`NOTE:` and lists them project-wide |
+| `vim-dirtytalk` | wordlists of programming jargon, compiled into the `programming` dictionary |
 | `windsurf.vim` | inline AI suggestions, no monthly quota (`:Codeium Auth` once) |
 | `copilot.vim` | inline GitHub Copilot suggestions, installed but disabled by default |
 | `claudecode.nvim` | Claude Code inside the editor, started with `--permission-mode auto` |
@@ -289,8 +294,36 @@ tasks stopped by hand.
 |---|---|
 | `<leader>ut` | Pick a colorscheme (with preview) |
 | `<leader>uc` | Toggle colorizer |
+| `<leader>us` | Toggle spell check in this buffer (on everywhere by default) |
+| `z=` / `zg` | Suggest a correction / add the word to the dictionary |
+| `]s` / `[s` | Next / previous misspelling |
 | `<leader>vs` | Select Python virtualenv |
 | `<leader>"` `'` `)` `]` `}` | Surround word with quotes/brackets |
+
+## Spell checking
+
+On in every buffer, in `en`, `uk`, `ru` and `programming`. What gets checked is
+narrow on purpose, roughly what a JetBrains IDE checks:
+
+- comments, strings and prose, via treesitter's own `@spell` captures;
+- names *declared* in the file (functions, classes, parameters, variables), via
+  `after/queries/<lang>/highlights.scm`. Imports and library calls are left alone:
+  their spelling isn't yours to fix. Covered languages: Python, Lua, JS, TS, TSX;
+- nothing at all in a buffer with no treesitter parser (`spelloptions=noplainbuffer`).
+
+`spelloptions=camel` splits `userReponse`, and the dictionaries split on `_`, so
+`test_get_produgts` flags `produgts` alone. Keywords and syntax are never checked —
+they aren't captured as `@spell`.
+
+Language jargon comes from `spell/programming.words` plus vim-dirtytalk's wordlists,
+compiled into `~/.local/share/nvim/site/spell/programming.utf-8.spl`. Add a project's
+vocabulary to that file and rerun `:Lazy build vim-dirtytalk`; use `zg` for one-off
+words, they land in `~/.local/share/nvim/site/spell/en.utf-8.add` whatever the
+language.
+
+The `en`/`uk`/`ru` dictionaries download themselves on first use, or by hand from
+`https://ftp.nluug.nl/pub/vim/runtime/spell/`. There is no `uk.utf-8.sug`, so `z=`
+gives worse suggestions for Ukrainian.
 
 ## Indentation
 
