@@ -57,6 +57,17 @@ return {
 	},
 
 	{
+		-- Regex-based on purpose: the treesitter route needs the `comment` parser
+		-- injected into every comment, which is slow on big docstrings and only
+		-- covers languages whose injections.scm asks for it.
+		"folke/todo-comments.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		event = { "BufReadPost", "BufNewFile" },
+		cmd = { "TodoTrouble", "TodoQuickFix", "TodoLocList" },
+		opts = {},
+	},
+
+	{
 		"folke/flash.nvim",
 		event = "VeryLazy",
 		opts = {

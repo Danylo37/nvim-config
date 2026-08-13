@@ -191,6 +191,15 @@ map("n", "<leader>xr", "<cmd>Trouble lsp_references toggle<CR>", { desc = "Refer
 map("n", "<leader>xd", "<cmd>Trouble lsp_definitions toggle<CR>", { desc = "Definitions" })
 map("n", "<leader>xq", "<cmd>Trouble quickfix toggle<CR>", { desc = "Quickfix" })
 map("n", "<leader>xl", "<cmd>Trouble loclist toggle<CR>", { desc = "Loclist" })
+map("n", "<leader>xt", "<cmd>TodoTrouble<CR>", { desc = "TODO comments" })
+
+map("n", "]t", function()
+	require("todo-comments").jump_next()
+end, { desc = "Next TODO comment" })
+
+map("n", "[t", function()
+	require("todo-comments").jump_prev()
+end, { desc = "Previous TODO comment" })
 
 -- -------------------------------------------------------------------- git ---
 
