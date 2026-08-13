@@ -23,6 +23,19 @@ return {
 			"OverseerTaskAction",
 		},
 		opts = {
+			-- Redefining the whole `default` bundle: this list replaces overseer's
+			-- rather than merging into it. Two changes from upstream:
+			-- `on_complete_notify` gets CANCELED, without which long-running tasks
+			-- (uvicorn, `docker compose up`) ended silently, and `open_output` is
+			-- added so a starting task is visible without opening the list by hand.
+			component_aliases = {
+				default = {
+					"on_exit_set_status",
+					{ "on_complete_notify", statuses = { "SUCCESS", "FAILURE", "CANCELED" } },
+					{ "open_output", on_start = "always", direction = "dock", focus = false },
+					{ "on_complete_dispose", require_view = { "SUCCESS", "FAILURE" } },
+				},
+			},
 			task_list = {
 				direction = "bottom",
 				bindings = {
@@ -81,6 +94,43 @@ return {
 							end,
 						},
 					}
+				end,
+			})
+
+			overseer.register_template({
+				name = "pytest",
+				generator = function(search)
+					local pyproject =
+						vim.fs.find("pyproject.toml", { upward = true, type = "file", path = search.dir })[1]
+
+					if not pyproject then
+						return "No pyproject.toml found"
+					end
+
+					local cwd = vim.fs.dirname(pyproject)
+					local ret = {
+						{
+							name = "pytest",
+							desc = "uv run pytest -vv -s",
+							builder = function()
+								return { cmd = { "uv", "run", "pytest", "-vv", "-s" }, cwd = cwd }
+							end,
+						},
+					}
+
+					local file = vim.api.nvim_buf_get_name(0)
+
+					if file:match("%.py$") then
+						table.insert(ret, {
+							name = "pytest (current file)",
+							desc = "uv run pytest -vv -s " .. vim.fs.basename(file),
+							builder = function()
+								return { cmd = { "uv", "run", "pytest", "-vv", "-s", file }, cwd = cwd }
+							end,
+						})
+					end
+
+					return ret
 				end,
 			})
 

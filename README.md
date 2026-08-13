@@ -263,6 +263,13 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 filter row: press `1`-`9` to run that entry outright, or `j`/`k` and `<CR>`. `/` brings
 up the filter if the list is long.
 
+On top of overseer's own templates, `lua/plugins/terminal.lua` registers three that
+resolve their working directory upwards from the current file: `uvicorn dev` and
+`pytest` (whole project or current file, both `uv run`) off the nearest
+`pyproject.toml`, and `docker compose up`/`down` off the nearest compose file. Every
+task opens its output in a dock as it starts and notifies when it ends, including
+tasks stopped by hand.
+
 ### `<leader>a` — AI / Claude
 | Key | Action |
 |---|---|
