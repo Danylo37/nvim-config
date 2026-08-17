@@ -21,17 +21,25 @@ vim.api.nvim_create_autocmd("SwapExists", {
 			end)
 		end
 
+		-- The swap header records what the file's mtime was when the swap was
+		-- made. Anything newer on disk means the file has been saved since, so
+		-- whatever the dead session was holding has been overtaken.
+		local stat = vim.uv.fs_stat(ev.file)
+		local superseded = stat and info.mtime and stat.mtime.sec > info.mtime
+
 		if running then
 			-- Another Neovim really does have the file open.
 			vim.v.swapchoice = "o"
 			notify(vim.fn.fnamemodify(ev.file, ":t") .. " is open in Neovim " .. info.pid .. ", opened read-only")
-		elseif info.dirty == 1 then
-			-- The session died with unsaved changes in it. They are only in the
-			-- swap file, so it stays where it is.
+		elseif info.dirty == 1 and not superseded then
+			-- The session died with unsaved changes and nothing has been saved
+			-- over them since. They exist only in the swap file, so it stays.
+			-- `:recover` reads it into the buffer; save, and the next open of
+			-- this file will clear the swap on its own.
 			vim.v.swapchoice = "e"
-			notify("Stale swap file holds unsaved changes, `:recover` to see them: " .. swap)
+			notify("Swap file holds changes never saved to disk, `:recover` to see them: " .. swap)
 		else
-			-- Nothing in it that isn't already on disk.
+			-- Nothing in it that the file on disk doesn't already have.
 			vim.v.swapchoice = "d"
 		end
 	end,

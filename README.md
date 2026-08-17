@@ -387,8 +387,14 @@ file left unopened. `lua/config/autocmds.lua` answers it for you:
 | Situation | What happens |
 |---|---|
 | another Neovim really has the file open | opens read-only, says which process holds it |
-| the session died with unsaved changes | opens as normal, keeps the swap, points at `:recover` |
-| the session died with nothing unsaved | deletes the swap without a word |
+| unsaved changes, and the file hasn't been saved since | opens as normal, keeps the swap, points at `:recover` |
+| unsaved changes, but the file has been saved since | deletes the swap: whatever it held has been overtaken |
+| nothing unsaved in it | deletes the swap without a word |
+
+The third row is what stops the warning from coming back forever. `:recover` reads a swap
+file into the buffer but never removes it, so a swap you have already dealt with would
+otherwise greet you at every single open. Save the file after recovering and the next
+open clears it.
 
 ## Indentation
 
