@@ -36,7 +36,16 @@ return {
 					if not lang or not pcall(vim.treesitter.start, ev.buf, lang) then
 						return
 					end
-					if vim.treesitter.query.get(lang, "indents") then
+					-- Only where Neovim ships nothing of its own. This autocmd runs
+					-- after the runtime indent file, so an `indentexpr` that is
+					-- still empty means there is no built-in to displace.
+					--
+					-- The built-ins win because they read intent, not just the
+					-- tree: dedent a blank line to leave a block and the next
+					-- <CR> stays where you put it, where the treesitter expression
+					-- recomputes from the enclosing node and pulls the indent
+					-- straight back.
+					if vim.bo[ev.buf].indentexpr == "" and vim.treesitter.query.get(lang, "indents") then
 						vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 					end
 				end,

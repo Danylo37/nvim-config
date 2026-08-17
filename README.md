@@ -363,6 +363,13 @@ gives worse suggestions for Ukrainian.
 JS/TS/HTML/CSS/JSON/YAML (`lua/config/autocmds.lua`). Python has no override of its
 own — Neovim's built-in `ftplugin/python.vim` already does 4 spaces (PEP8).
 
+Where the indent of a *new* line comes from is Neovim's own `indent/<ft>.vim`.
+nvim-treesitter's `indentexpr` is installed only for filetypes that have no built-in
+(markdown, today): it recomputes the indent from the syntax tree, which undoes a manual
+dedent — press `<CR>`, dedent out of a Python block, press `<CR>` again, and it would
+pull you back in. `smartindent` is off for the same reason; it predates filetype indent
+files and only ever applies where `indentexpr` is empty.
+
 ## Customizing
 
 House rule: **keymaps live only in `keymaps.lua`**, plugin specs never set them

@@ -35,4 +35,9 @@ vim.opt.shiftwidth = 4
 vim.opt.softtabstop = 4
 vim.opt.expandtab = true
 vim.opt.autoindent = true
-vim.opt.smartindent = true
+
+-- Off: a C-shaped guess at what the next line should look like, from before
+-- filetype indent files existed. It is ignored outright wherever `indentexpr`
+-- is set, and where it isn't (markdown, plain text) its rules about `{`, `}`
+-- and `#` do more harm than `autoindent` alone.
+vim.opt.smartindent = false
