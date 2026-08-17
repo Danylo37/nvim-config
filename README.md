@@ -62,7 +62,7 @@ init.lua                    -- entry point: options -> keymaps -> autocmds -> la
 lua/config/
   options.lua               -- vim.opt, indent, leader
   keymaps.lua               -- EVERY keymap in the config, one file
-  autocmds.lua              -- indent overrides for lua/js/ts/html/css/json/yaml
+  autocmds.lua              -- swap file policy, indent overrides for lua/js/ts/html/css/json/yaml
 
 lua/plugins/                -- one file per plugin theme
   lsp.lua                   -- mason, lspconfig, lspsaga, trouble
@@ -376,6 +376,19 @@ Everything is in `lua/config/options.lua`; these are the ones you would notice m
 | `confirm` | `:q` with unsaved changes asks instead of failing |
 | `winborder=rounded` | default frame for floating windows, the completion menu included |
 | `splitright` + `splitbelow` | new windows open right and below |
+
+## Swap files
+
+A swap file that outlives the session that wrote it normally greets you with the E325
+prompt, and when the file is being opened from Lua — the dashboard's recent files, a
+picker — the prompt can't be answered and you get an E5108 traceback instead, with the
+file left unopened. `lua/config/autocmds.lua` answers it for you:
+
+| Situation | What happens |
+|---|---|
+| another Neovim really has the file open | opens read-only, says which process holds it |
+| the session died with unsaved changes | opens as normal, keeps the swap, points at `:recover` |
+| the session died with nothing unsaved | deletes the swap without a word |
 
 ## Indentation
 
