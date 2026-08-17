@@ -4,8 +4,39 @@ vim.g.maplocalleader = " "
 vim.opt.number = true
 vim.opt.signcolumn = "yes:1"
 vim.opt.termguicolors = true
-vim.opt.splitright = true
+vim.opt.cursorline = true
 vim.opt.clipboard = "unnamedplus"
+
+-- New windows open right and below, i.e. where the cursor is going, so the
+-- window you were reading does not jump somewhere else on the screen.
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+
+-- Never let the cursor sit against the top or bottom edge; the eight lines
+-- after the one you are on are context you almost always want.
+vim.opt.scrolloff = 8
+
+-- Undo survives closing the file, in ~/.local/state/nvim/undo.
+vim.opt.undofile = true
+
+-- Case-insensitive search, unless the pattern itself has a capital in it.
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+
+-- :s previews as you type it, with the affected lines in a split.
+vim.opt.inccommand = "split"
+
+-- How long the cursor has to sit still before `CursorHold` fires, which is
+-- what anything appearing "when you pause" waits on. The default 4s is long
+-- enough that those hints never show up at all. Not a polling interval: the
+-- timer runs once after you stop, and resets the moment you move.
+vim.opt.updatetime = 200
+
+-- `:q` with unsaved changes asks instead of failing with E37.
+vim.opt.confirm = true
+
+-- Default frame for floating windows that do not ask for one themselves.
+vim.o.winborder = "rounded"
 
 vim.diagnostic.config({
 	virtual_text = false,

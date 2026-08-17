@@ -16,6 +16,7 @@
 --   <leader>g  Git               <leader>x  Diagnostics
 --   <leader>h  Harpoon           <leader>m  Multicursor
 --   <leader>r  Refactor          <leader>o  Overseer / tasks
+--   <leader>w  Windows
 
 local map = vim.keymap.set
 local util = require("util")
@@ -63,6 +64,13 @@ map("n", "<A-h>", "<cmd>vertical resize -2<CR>", { desc = "Decrease window width
 map("n", "<A-l>", "<cmd>vertical resize +2<CR>", { desc = "Increase window width" })
 map("n", "<A-j>", "<cmd>resize -2<CR>", { desc = "Decrease window height" })
 map("n", "<A-k>", "<cmd>resize +2<CR>", { desc = "Increase window height" })
+
+-- Same letters as the built-in <C-w>v / <C-w>s / <C-w>o they stand in for.
+map("n", "<leader>wv", "<cmd>vsplit<CR>", { desc = "Split window right" })
+map("n", "<leader>ws", "<cmd>split<CR>", { desc = "Split window below" })
+map("n", "<leader>wd", "<cmd>close<CR>", { desc = "Close window" })
+map("n", "<leader>wo", "<cmd>only<CR>", { desc = "Close other windows" })
+map("n", "<leader>w=", "<C-w>=", { desc = "Balance window sizes" })
 
 -- ---------------------------------------------------------------- buffers ---
 

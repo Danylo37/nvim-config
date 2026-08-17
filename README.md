@@ -184,6 +184,11 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 |---|---|
 | `<C-h/j/k/l>` | Move between windows |
 | `<A-h/j/k/l>` | Resize window |
+| `<leader>wv` | Split window right |
+| `<leader>ws` | Split window below |
+| `<leader>wd` | Close window |
+| `<leader>wo` | Close every other window |
+| `<leader>w=` | Balance window sizes |
 | `<S-h>` / `<S-l>` | Previous / next buffer |
 | `<leader>bd` | Close buffer |
 | `<leader>b1..9` | Go to buffer by number |
@@ -356,6 +361,21 @@ language.
 The `en`/`uk`/`ru` dictionaries download themselves on first use, or by hand from
 `https://ftp.nluug.nl/pub/vim/runtime/spell/`. There is no `uk.utf-8.sug`, so `z=`
 gives worse suggestions for Ukrainian.
+
+## Options worth knowing
+
+Everything is in `lua/config/options.lua`; these are the ones you would notice missing.
+
+| Option | Effect |
+|---|---|
+| `undofile` | undo history survives closing the file (`~/.local/state/nvim/undo`) |
+| `ignorecase` + `smartcase` | search ignores case until the pattern has a capital in it |
+| `inccommand=split` | `:s` previews live, affected lines listed in a split |
+| `scrolloff=8` | the cursor never sits against the top or bottom edge |
+| `updatetime=200` | how long a pause is before `CursorHold` hints appear (default is 4s) |
+| `confirm` | `:q` with unsaved changes asks instead of failing |
+| `winborder=rounded` | default frame for floating windows, the completion menu included |
+| `splitright` + `splitbelow` | new windows open right and below |
 
 ## Indentation
 

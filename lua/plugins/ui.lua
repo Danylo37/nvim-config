@@ -84,6 +84,7 @@ return {
 				{ "<leader>t", group = "Terminal" },
 				{ "<leader>u", group = "UI toggles" },
 				{ "<leader>v", group = "Venv" },
+				{ "<leader>w", group = "Windows" },
 				{ "<leader>x", group = "Diagnostics" },
 			},
 		},
