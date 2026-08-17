@@ -37,6 +37,9 @@ return {
 					"prettier",
 					"stylua",
 					"sql-formatter",
+
+					-- The Python debug adapter behind nvim-dap-python.
+					"debugpy",
 				},
 				run_on_start = true,
 			})

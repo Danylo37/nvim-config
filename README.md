@@ -72,6 +72,7 @@ lua/plugins/                -- one file per plugin theme
   git.lua                   -- gitsigns
   lang.lua                  -- venv-selector, jupytext, render-markdown
   ai.lua                    -- windsurf, copilot, claudecode
+  debug.lua                 -- nvim-dap, dap-ui, dap-python
   terminal.lua              -- toggleterm, overseer
   snacks.lua                -- dashboard, picker, input, image, lazygit
   ui.lua                    -- theme, statusline, tabs, which-key, notifications, etc.
@@ -98,6 +99,13 @@ spell/
 | `conform.nvim` | formatting: stylua (Lua), ruff (Python), prettier (JS/TS/HTML/CSS/JSON/YAML/MD), sql_formatter |
 | `nvim-treesitter` | syntax highlighting and indent via parsers (`main` branch, wired by hand) |
 | `nvim-treesitter-textobjects` | select and jump by function/class/argument (`main` branch) |
+
+### Debugging
+| Plugin | What it's for |
+|---|---|
+| `nvim-dap` | the debugger itself: breakpoints, stepping, sessions |
+| `nvim-dap-ui` (+ `nvim-nio`) | scopes, stacks, watches and breakpoints in panels around the code |
+| `nvim-dap-python` | Python launch configurations through `debugpy`, no `launch.json` needed |
 
 ### Completion, editing and AI
 | Plugin | What it's for |
@@ -245,6 +253,26 @@ whole thing, `i` only its insides.
 | `<leader>xq` / `<leader>xl` | Quickfix / Loclist |
 | `<leader>xt` | TODO/FIXME comments across the project (Trouble) |
 | `[t` / `]t` | Previous / next TODO comment |
+
+### `<leader>d` — Debug
+The panels open when a session starts and close when it ends, so a run is `<leader>db` to
+mark the line, `<leader>dc` to get there.
+
+| Key | Action |
+|---|---|
+| `<leader>db` | Toggle breakpoint |
+| `<leader>dB` | Breakpoint with a condition |
+| `<leader>dc` / `<F5>` | Start the session, or continue a running one |
+| `<leader>dC` | Run to cursor |
+| `<leader>do` / `<F10>` | Step over |
+| `<leader>di` / `<F11>` | Step into |
+| `<leader>dO` / `<F12>` | Step out |
+| `<leader>de` | Evaluate expression, or the visual selection |
+| `<leader>du` | Toggle the panels |
+| `<leader>dr` | Toggle the REPL |
+| `<leader>dl` | Run the last configuration again |
+| `<leader>dt` | Terminate the session |
+| `<leader>dm` / `<leader>dM` | Debug the nearest pytest test / its class |
 
 ### `<leader>g` — Git
 | Key | Action |

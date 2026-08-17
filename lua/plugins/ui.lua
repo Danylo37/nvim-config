@@ -74,6 +74,7 @@ return {
 				{ "<leader>a", group = "AI / Claude" },
 				{ "<leader>b", group = "Buffer" },
 				{ "<leader>c", group = "Code" },
+				{ "<leader>d", group = "Debug" },
 				{ "<leader>f", group = "Find / Files" },
 				{ "<leader>g", group = "Git" },
 				{ "<leader>h", group = "Harpoon" },

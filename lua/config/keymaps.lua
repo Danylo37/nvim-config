@@ -12,6 +12,7 @@
 --   <leader>a  AI / Claude       <leader>s  Search & replace
 --   <leader>b  Buffer            <leader>t  Terminal
 --   <leader>c  Code              <leader>u  UI toggles
+--   <leader>d  Debug
 --   <leader>f  Find / files      <leader>v  Venv
 --   <leader>g  Git               <leader>x  Diagnostics
 --   <leader>h  Harpoon           <leader>m  Multicursor
@@ -243,6 +244,91 @@ end, { desc = "Next TODO comment" })
 map("n", "[t", function()
 	require("todo-comments").jump_prev()
 end, { desc = "Previous TODO comment" })
+
+-- -------------------------------------------------------------------- dap ---
+
+-- The panels open and close with the session (lua/plugins/debug.lua), so a run
+-- is <leader>db to mark the line and <leader>dc to get there.
+map("n", "<leader>db", function()
+	require("dap").toggle_breakpoint()
+end, { desc = "Toggle breakpoint" })
+
+map("n", "<leader>dB", function()
+	vim.ui.input({ prompt = "Break when: " }, function(condition)
+		if condition and condition ~= "" then
+			require("dap").set_breakpoint(condition)
+		end
+	end)
+end, { desc = "Conditional breakpoint" })
+
+-- Starts the session when none is running, resumes it when one is.
+map("n", "<leader>dc", function()
+	require("dap").continue()
+end, { desc = "Continue / start" })
+
+map("n", "<leader>dC", function()
+	require("dap").run_to_cursor()
+end, { desc = "Run to cursor" })
+
+map("n", "<leader>do", function()
+	require("dap").step_over()
+end, { desc = "Step over" })
+
+map("n", "<leader>di", function()
+	require("dap").step_into()
+end, { desc = "Step into" })
+
+map("n", "<leader>dO", function()
+	require("dap").step_out()
+end, { desc = "Step out" })
+
+map("n", "<leader>dl", function()
+	require("dap").run_last()
+end, { desc = "Run last configuration" })
+
+map("n", "<leader>dt", function()
+	require("dap").terminate()
+end, { desc = "Terminate session" })
+
+map("n", "<leader>dr", function()
+	require("dap").repl.toggle()
+end, { desc = "Toggle REPL" })
+
+map("n", "<leader>du", function()
+	require("dapui").toggle()
+end, { desc = "Toggle debugger panels" })
+
+-- In visual mode the selection is the expression, which is how you check what
+-- half of a long condition actually evaluates to.
+map({ "n", "x" }, "<leader>de", function()
+	require("dapui").eval()
+end, { desc = "Evaluate expression" })
+
+map("n", "<leader>dm", function()
+	require("dap-python").test_method()
+end, { desc = "Debug nearest test" })
+
+map("n", "<leader>dM", function()
+	require("dap-python").test_class()
+end, { desc = "Debug test class" })
+
+-- The stepping loop is what a debugger session mostly is, and reaching for
+-- <leader> on every step gets old. Same keys every other debugger uses.
+map("n", "<F5>", function()
+	require("dap").continue()
+end, { desc = "Debug: continue" })
+
+map("n", "<F10>", function()
+	require("dap").step_over()
+end, { desc = "Debug: step over" })
+
+map("n", "<F11>", function()
+	require("dap").step_into()
+end, { desc = "Debug: step into" })
+
+map("n", "<F12>", function()
+	require("dap").step_out()
+end, { desc = "Debug: step out" })
 
 -- -------------------------------------------------------------------- git ---
 
