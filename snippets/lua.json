@@ -1,0 +1,35 @@
+{
+	"Keymap": {
+		"prefix": "map",
+		"body": [
+			"map(\"${1:n}\", \"${2:<leader>}\", function()",
+			"\t$0",
+			"end, { desc = \"${3:Description}\" })"
+		],
+		"description": "A keymap in the shape config/keymaps.lua uses"
+	},
+
+	"Lazy plugin spec": {
+		"prefix": "spec",
+		"body": [
+			"{",
+			"\t\"${1:author}/${2:plugin}\",",
+			"\topts = {$0},",
+			"},"
+		],
+		"description": "A lazy.nvim plugin table"
+	},
+
+	"Autocmd": {
+		"prefix": "au",
+		"body": [
+			"vim.api.nvim_create_autocmd(\"${1:FileType}\", {",
+			"\tpattern = \"${2:lua}\",",
+			"\tcallback = function()",
+			"\t\t$0",
+			"\tend,",
+			"})"
+		],
+		"description": "vim.api.nvim_create_autocmd"
+	}
+}

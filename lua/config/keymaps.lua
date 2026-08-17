@@ -332,7 +332,17 @@ end, { desc = "Action on the last task" })
 -- ------------------------------------------------------------ ai / claude ---
 
 -- Windsurf drives inline suggestions; Copilot wins only while explicitly enabled.
+-- An unfinished snippet outranks both: accepting a suggestion instead of moving
+-- to the next placeholder would strand the expansion half-filled.
 map("i", "<Tab>", function()
+	if require("luasnip").locally_jumpable(1) then
+		-- Returned rather than called: an expr mapping runs under textlock, so
+		-- the jump has to happen after it, through <Cmd>. The termcodes are
+		-- resolved here because `replace_keycodes = false` below is what keeps
+		-- the escapes in the AI engines' own output intact.
+		return vim.api.nvim_replace_termcodes("<Cmd>lua require('luasnip').jump(1)<CR>", true, true, true)
+	end
+
 	if vim.g.copilot_enabled and vim.fn["copilot#GetDisplayedSuggestion"]().text ~= "" then
 		return vim.fn["copilot#Accept"]("\t")
 	end
@@ -341,8 +351,18 @@ end, {
 	expr = true,
 	replace_keycodes = false,
 	silent = true,
-	desc = "Accept AI suggestion",
+	desc = "Accept AI suggestion / next snippet placeholder",
 })
+
+-- A jump leaves the placeholder selected, i.e. in select mode, where nothing
+-- else is competing for <Tab>.
+map("s", "<Tab>", function()
+	require("luasnip").jump(1)
+end, { desc = "Next snippet placeholder" })
+
+map({ "i", "s" }, "<S-Tab>", function()
+	require("luasnip").jump(-1)
+end, { desc = "Previous snippet placeholder" })
 
 -- Kills suggestions from both engines at once, so the state matches what <Tab>
 -- above actually reads. Turning them back on restores Windsurf only — Copilot

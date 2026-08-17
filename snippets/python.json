@@ -1,0 +1,36 @@
+{
+	"Guarded entry point": {
+		"prefix": "main",
+		"body": [
+			"def main() -> None:",
+			"\t$0",
+			"",
+			"",
+			"if __name__ == \"__main__\":",
+			"\tmain()"
+		],
+		"description": "main() plus the __main__ guard"
+	},
+
+	"Pytest fixture": {
+		"prefix": "fixture",
+		"body": [
+			"@pytest.fixture",
+			"def ${1:name}():",
+			"\treturn $0"
+		],
+		"description": "A pytest fixture"
+	},
+
+	"Parametrized test": {
+		"prefix": "param",
+		"body": [
+			"@pytest.mark.parametrize(\"${1:value},${2:expected}\", [",
+			"\t($0),",
+			"])",
+			"def test_${3:name}(${1}, ${2}):",
+			"\tassert "
+		],
+		"description": "A pytest.mark.parametrize test"
+	}
+}

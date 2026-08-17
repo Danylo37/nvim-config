@@ -66,7 +66,7 @@ lua/config/
 
 lua/plugins/                -- one file per plugin theme
   lsp.lua                   -- mason, lspconfig, lspsaga, trouble
-  completion.lua            -- nvim-cmp, autopairs
+  completion.lua            -- nvim-cmp, LuaSnip, autopairs
   editor.lua                -- treesitter, flash, multicursor, harpoon, grug-far, conform, surround, comment, todo-comments, dirtytalk
   files.lua                 -- neo-tree
   git.lua                   -- gitsigns
@@ -81,6 +81,7 @@ lua/util/
   lsp_undo.lua              -- undo multi-file LSP edits (<leader>ru)
 
 after/queries/              -- `(identifier) @spell`: which names the spell checker reads
+snippets/                   -- personal snippets, VSCode format (package.json lists the files)
 spell/
   programming.words         -- extra dictionary words, compiled into `programming`
 ```
@@ -100,7 +101,8 @@ spell/
 ### Completion, editing and AI
 | Plugin | What it's for |
 |---|---|
-| `nvim-cmp` + `cmp-nvim-lsp`/`cmp-buffer`/`cmp-path` | autocompletion |
+| `nvim-cmp` + `cmp-nvim-lsp`/`cmp-buffer`/`cmp-path`/`cmp_luasnip` | autocompletion |
+| `LuaSnip` + `friendly-snippets` | expands snippets, including the ones LSP completions carry |
 | `nvim-autopairs` | auto-closes brackets/quotes |
 | `vim-surround` | adds/changes/removes surrounding quotes and brackets (`ys`/`cs`/`ds`) |
 | `mini.comment` | comments lines and motions with `gc` |
@@ -166,6 +168,16 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 | `<leader>F` | Format buffer |
 | `s` | Flash: jump to text |
 | `gc` / `gcc` | Comment a motion / the current line |
+
+### Completion and snippets
+| Key | Action |
+|---|---|
+| `<C-Space>` | Open the completion menu |
+| `<C-s>` | Open it with snippets only |
+| `<C-j>` / `<C-k>` | Next / previous item (`<C-n>`/`<C-p>` do the same) |
+| `<CR>` | Confirm (a snippet item expands, placeholders included) |
+| `<Tab>` | Next placeholder while a snippet is active, otherwise accept the AI suggestion |
+| `<S-Tab>` | Previous placeholder |
 
 ### Windows and buffers
 | Key | Action |
@@ -281,7 +293,7 @@ tasks stopped by hand.
 ### `<leader>a` — AI / Claude
 | Key | Action |
 |---|---|
-| `<Tab>` (insert) | Accept AI suggestion (Windsurf, or Copilot when enabled) |
+| `<Tab>` (insert) | Accept AI suggestion (Windsurf, or Copilot when enabled) — an unfinished snippet takes it first |
 | `<leader>ua` | Toggle inline completion (off silences both engines) |
 | `<leader>aa` | Resume the last Claude Code session in this directory (or send selection) |
 | `<leader>an` | Start a new Claude Code session |
@@ -299,6 +311,26 @@ tasks stopped by hand.
 | `]s` / `[s` | Next / previous misspelling |
 | `<leader>vs` | Select Python virtualenv |
 | `<leader>"` `'` `)` `]` `}` | Surround word with quotes/brackets |
+
+## Snippets
+
+Two sources, both through LuaSnip:
+
+- **`friendly-snippets`** — a library covering every common language, loaded lazily per
+  filetype. Its entries show up in the completion menu like any other item;
+- **`snippets/`** in this repository — your own, same VSCode JSON format. A new file
+  there has to be listed in `snippets/package.json`, then it is picked up on the next
+  restart.
+
+LSP completions carry snippet bodies of their own (that is what puts the parentheses and
+arguments in after a function name); `nvim-cmp` hands those to LuaSnip too. Whatever the
+source, `<Tab>` walks forward through the placeholders and `<S-Tab>` back, until you
+leave the snippet region.
+
+So that snippets don't drown in the rest of the menu, the `luasnip` source carries the
+highest `priority` (added straight to an entry's match score, so a matching snippet ranks
+above the LSP items), and the right-hand column names the source every item came from.
+`<C-s>` skips the question entirely and opens a menu built from snippets alone.
 
 ## Spell checking
 
