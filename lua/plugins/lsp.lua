@@ -12,12 +12,19 @@ return {
 		opts = {
 			ensure_installed = {
 				"basedpyright",
+				"ruff",
 				"ts_ls",
 				"lua_ls",
 				"html",
 				"cssls",
 				"sqls",
 			},
+
+			-- Off: left on, this starts every server Mason happens to have
+			-- installed, configured here or not — which is how an unconfigured
+			-- `ruff` and `eslint` ended up attaching to buffers. The
+			-- `vim.lsp.enable` call below is the only list that decides.
+			automatic_enable = false,
 		},
 	},
 
@@ -29,8 +36,6 @@ return {
 				ensure_installed = {
 					"prettier",
 					"stylua",
-					"black",
-					"ruff",
 					"sql-formatter",
 				},
 				run_on_start = true,
@@ -74,14 +79,59 @@ return {
 					},
 
 					basedpyright = {
+						-- Ruff owns imports, both the sorting and the removing.
+						disableOrganizeImports = true,
+
 						analysis = {
 							typeCheckingMode = "standard",
 							autoSearchPaths = true,
 							useLibraryCodeForTypes = true,
 							autoImportCompletions = true,
+
+							-- Ruff reports these as F401/F841 already, and two
+							-- diagnostics for one unused name is one too many.
+							-- Type checking, which is why basedpyright is here,
+							-- is untouched.
+							diagnosticSeverityOverrides = {
+								reportUnusedImport = "none",
+								reportUnusedVariable = "none",
+								reportUnusedExpression = "none",
+							},
 						},
 					},
 				},
+			})
+
+			-- Linting, import sorting and the fixes for both. Type checking is
+			-- basedpyright's, and the two are configured not to overlap.
+			vim.lsp.config("ruff", {
+				capabilities = capabilities,
+
+				-- Ruff's hover only explains `noqa` codes, so basedpyright is
+				-- left as the single answer to `K`.
+				on_attach = function(client)
+					client.server_capabilities.hoverProvider = false
+				end,
+
+				-- A buffer with no file behind it (`:enew`, a scratch buffer)
+				-- makes the server panic on a path it cannot take a parent of,
+				-- and it takes the whole client down with it. Not calling
+				-- `on_dir` leaves such a buffer without ruff, which is all it
+				-- could have offered anyway.
+				root_dir = function(bufnr, on_dir)
+					local name = vim.api.nvim_buf_get_name(bufnr)
+
+					if name == "" then
+						return
+					end
+
+					on_dir(vim.fs.root(bufnr, {
+						"pyproject.toml",
+						"ruff.toml",
+						".ruff.toml",
+						".git",
+					}) or vim.fs.dirname(name))
+				end,
 			})
 
 			vim.lsp.config("ts_ls", {
@@ -106,6 +156,7 @@ return {
 
 			vim.lsp.enable({
 				"basedpyright",
+				"ruff",
 				"ts_ls",
 				"html",
 				"cssls",

@@ -206,7 +206,10 @@ return {
 				formatters_by_ft = {
 					lua = { "stylua" },
 
-					python = { "ruff_format", "black" },
+					-- Two formatters used to run here, and black undid what
+					-- ruff_format had just done. Ruff alone now: sort the
+					-- imports, then lay out the code.
+					python = { "ruff_organize_imports", "ruff_format" },
 
 					javascript = { "prettier" },
 					javascriptreact = { "prettier" },

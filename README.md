@@ -28,7 +28,7 @@ with recent projects, AI assistants (Windsurf + Claude Code), and every keymap i
 | [lazydocker](https://github.com/jesseduffield/lazydocker) | no | the docker TUI behind `<leader>td` | that mapping opens an empty terminal |
 | [lazysql](https://github.com/jorgerojas26/lazysql) | no | the database TUI behind `<leader>tl` | that mapping opens an empty terminal |
 | [Nerd Font](https://www.nerdfonts.com/) in your terminal | no | icons in the dashboard, file tree, statusline, git/diagnostic signs | icons show as blank boxes or garbled glyphs; nothing else breaks |
-| Python 3 + `pip` | no, but needed for Python projects | `basedpyright`/`ruff`/`black` don't need a system Python themselves, but project venvs do | venv-selector (`<leader>vs`) has nothing to find |
+| Python 3 + `pip` | no, but needed for Python projects | `basedpyright` and `ruff` don't need a system Python themselves, but project venvs do | venv-selector (`<leader>vs`) has nothing to find |
 
 On Debian/Ubuntu, `fd` is often packaged as `fd-find` and only available as `fdfind` —
 in that case pass `options = { fd_binary_name = "fdfind" }` to `venv-selector.nvim`
@@ -92,10 +92,10 @@ spell/
 | Plugin | What it's for |
 |---|---|
 | `mason.nvim` + `mason-lspconfig` + `mason-tool-installer` | installs and updates LSP servers and formatters |
-| `nvim-lspconfig` | wires up LSP: `basedpyright` (Python), `ts_ls` (JS/TS), `html`, `cssls`, `lua_ls`, `sqls` |
+| `nvim-lspconfig` | wires up LSP: `basedpyright` + `ruff` (Python), `ts_ls` (JS/TS), `html`, `cssls`, `lua_ls`, `sqls` |
 | `lspsaga.nvim` | floating windows for definition/finder/rename/code action/line diagnostics |
 | `trouble.nvim` | persistent panel for diagnostics/references/quickfix at the bottom |
-| `conform.nvim` | formatting: stylua (Lua), ruff/black (Python), prettier (JS/TS/HTML/CSS/JSON/YAML/MD), sql_formatter |
+| `conform.nvim` | formatting: stylua (Lua), ruff (Python), prettier (JS/TS/HTML/CSS/JSON/YAML/MD), sql_formatter |
 | `nvim-treesitter` | syntax highlighting and indent via parsers (`main` branch, wired by hand) |
 | `nvim-treesitter-textobjects` | select and jump by function/class/argument (`main` branch) |
 
@@ -389,6 +389,25 @@ Everything is in `lua/config/options.lua`; these are the ones you would notice m
 | `confirm` | `:q` with unsaved changes asks instead of failing |
 | `winborder=rounded` | default frame for floating windows, the completion menu included |
 | `splitright` + `splitbelow` | new windows open right and below |
+
+## Python
+
+Two servers on a Python buffer, with the work split so nothing is said twice:
+
+| | `ruff` | `basedpyright` |
+|---|---|---|
+| linting (`F401`, `F841`, …) | yes | its own equivalents are turned off |
+| type checking | no | yes, `standard` mode |
+| imports | sorts and removes them | `disableOrganizeImports` |
+| hover (`K`) | turned off | yes |
+| formatting | `<leader>F`, through conform | no |
+
+`black` is gone. It used to run after `ruff_format` in the same conform chain and
+reformat what ruff had just laid out; `ruff_organize_imports` then `ruff_format` is the
+whole Python pipeline now.
+
+`ruff` stays away from buffers with no file behind them: it panics on a path it cannot
+take a parent of, and takes its own client down with it.
 
 ## Swap files
 
