@@ -74,21 +74,6 @@ return {
 					{ name = "buffer", priority = 40 },
 					{ name = "path", priority = 20 },
 				},
-
-				-- Which source an item came from, in the right-hand column. The
-				-- kind column already says "Snippet", but it is easy to miss.
-				formatting = {
-					format = function(entry, item)
-						item.menu = ({
-							luasnip = "snippet",
-							nvim_lsp = "lsp",
-							buffer = "buffer",
-							path = "path",
-						})[entry.source.name]
-
-						return item
-					end,
-				},
 			})
 		end,
 	},

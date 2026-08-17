@@ -333,9 +333,9 @@ source, `<Tab>` walks forward through the placeholders and `<S-Tab>` back, until
 leave the snippet region.
 
 So that snippets don't drown in the rest of the menu, the `luasnip` source carries the
-highest `priority` (added straight to an entry's match score, so a matching snippet ranks
-above the LSP items), and the right-hand column names the source every item came from.
-`<C-s>` skips the question entirely and opens a menu built from snippets alone.
+highest `priority`, which is added straight to an entry's match score, so a matching
+snippet ranks above the LSP items. `<C-s>` skips the question entirely and opens a menu
+built from snippets alone.
 
 ## Spell checking
 

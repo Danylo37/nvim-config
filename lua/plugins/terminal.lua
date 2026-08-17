@@ -7,7 +7,9 @@ return {
 		cmd = { "ToggleTerm", "TermSelect", "TermExec" },
 		opts = {
 			float_opts = {
-				border = "curved",
+				-- toggleterm never looks at `winborder` and falls back to a square
+				-- "single" of its own, so the global has to be handed over.
+				border = vim.o.winborder,
 			},
 		},
 	},

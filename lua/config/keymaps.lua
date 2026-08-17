@@ -281,7 +281,9 @@ end
 map("n", "<leader>td", function()
 	require("snacks").terminal.toggle("lazydocker", {
 		cwd = util.root(),
-		win = { position = "float", border = "rounded" },
+		-- `true` is snacks' way of saying "whatever `winborder` is"; without a
+		-- border key at all a snacks float has none.
+		win = { position = "float", border = true },
 	})
 end, { desc = "Lazydocker" })
 
@@ -289,7 +291,9 @@ end, { desc = "Lazydocker" })
 -- project.
 map("n", "<leader>tl", function()
 	require("snacks").terminal.toggle("lazysql", {
-		win = { position = "float", border = "rounded" },
+		-- `true` is snacks' way of saying "whatever `winborder` is"; without a
+		-- border key at all a snacks float has none.
+		win = { position = "float", border = true },
 	})
 end, { desc = "Lazysql" })
 
