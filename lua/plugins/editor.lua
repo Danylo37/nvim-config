@@ -54,6 +54,27 @@ return {
 	},
 
 	{
+		-- Text objects for what the code *is* — a function, a class, an
+		-- argument — instead of what it is wrapped in. `main` for the same
+		-- reason nvim-treesitter is: the old branch's module system is gone,
+		-- and every mapping is spelled out in config/keymaps.lua instead.
+		"nvim-treesitter/nvim-treesitter-textobjects",
+		branch = "main",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		opts = {
+			select = {
+				-- `vaf` from above a function still selects it, rather than
+				-- failing because the cursor is not inside one yet.
+				lookahead = true,
+			},
+			move = {
+				-- A jump is a jump: <C-o> comes back from it.
+				set_jumps = true,
+			},
+		},
+	},
+
+	{
 		"tpope/vim-surround",
 	},
 

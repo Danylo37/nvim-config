@@ -67,7 +67,7 @@ lua/config/
 lua/plugins/                -- one file per plugin theme
   lsp.lua                   -- mason, lspconfig, lspsaga, trouble
   completion.lua            -- nvim-cmp, LuaSnip, autopairs
-  editor.lua                -- treesitter, flash, multicursor, harpoon, grug-far, conform, surround, comment, todo-comments, dirtytalk
+  editor.lua                -- treesitter (+textobjects), flash, multicursor, harpoon, grug-far, conform, surround, comment, todo-comments, dirtytalk
   files.lua                 -- neo-tree
   git.lua                   -- gitsigns
   lang.lua                  -- venv-selector, jupytext, render-markdown
@@ -97,6 +97,7 @@ spell/
 | `trouble.nvim` | persistent panel for diagnostics/references/quickfix at the bottom |
 | `conform.nvim` | formatting: stylua (Lua), ruff/black (Python), prettier (JS/TS/HTML/CSS/JSON/YAML/MD), sql_formatter |
 | `nvim-treesitter` | syntax highlighting and indent via parsers (`main` branch, wired by hand) |
+| `nvim-treesitter-textobjects` | select and jump by function/class/argument (`main` branch) |
 
 ### Completion, editing and AI
 | Plugin | What it's for |
@@ -168,6 +169,18 @@ Leader is **Space**. The full list lives in `lua/config/keymaps.lua` (with `desc
 | `<leader>F` | Format buffer |
 | `s` | Flash: jump to text |
 | `gc` / `gcc` | Comment a motion / the current line |
+
+### Text objects
+Everything below works after an operator (`d`, `c`, `y`) and in visual mode: `a` takes the
+whole thing, `i` only its insides.
+
+| Key | Action |
+|---|---|
+| `af` / `if` | Function, with its signature / its body only |
+| `ac` / `ic` | Class / class body |
+| `aa` / `ia` | Argument, with its comma / the argument itself |
+| `]f` / `[f` | Jump to the next / previous function |
+| `]c` / `[c` | Jump to the next / previous class (in a diff window, the next change, as usual) |
 
 ### Completion and snippets
 | Key | Action |

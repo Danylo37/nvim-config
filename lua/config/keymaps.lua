@@ -98,6 +98,41 @@ map({ "n", "x", "o" }, "s", function()
 	require("flash").jump()
 end, { desc = "Flash jump" })
 
+-- ------------------------------------------------------------ textobjects ---
+
+-- Objects named after what the code is, not what wraps it. `x` is visual and
+-- `o` is what an operator waits for, so one mapping serves both `vaf` and
+-- `daf`. `a` takes the whole thing, `i` only its insides.
+for lhs, object in pairs({
+	["af"] = { "@function.outer", "Function" },
+	["if"] = { "@function.inner", "Function body" },
+	["ac"] = { "@class.outer", "Class" },
+	["ic"] = { "@class.inner", "Class body" },
+	["aa"] = { "@parameter.outer", "Argument" },
+	["ia"] = { "@parameter.inner", "Argument value" },
+}) do
+	map({ "x", "o" }, lhs, function()
+		require("nvim-treesitter-textobjects.select").select_textobject(object[1], "textobjects")
+	end, { desc = object[2] })
+end
+
+-- `]c`/`[c` are Vim's own "next change" in a diff, which is worth more than a
+-- class jump while a diff is what you are looking at.
+local function ts_move(direction, capture, in_diff)
+	return function()
+		if in_diff and vim.wo.diff then
+			return vim.cmd("normal! " .. vim.v.count1 .. in_diff)
+		end
+
+		require("nvim-treesitter-textobjects.move")[direction](capture, "textobjects")
+	end
+end
+
+map({ "n", "x", "o" }, "]f", ts_move("goto_next_start", "@function.outer"), { desc = "Next function" })
+map({ "n", "x", "o" }, "[f", ts_move("goto_previous_start", "@function.outer"), { desc = "Previous function" })
+map({ "n", "x", "o" }, "]c", ts_move("goto_next_start", "@class.outer", "]c"), { desc = "Next class" })
+map({ "n", "x", "o" }, "[c", ts_move("goto_previous_start", "@class.outer", "[c"), { desc = "Previous class" })
+
 -- ------------------------------------------------------------ multicursor ---
 
 map({ "n", "x" }, "<C-n>", function()
