@@ -104,6 +104,35 @@ end, { desc = "Flash jump" })
 -- Objects named after what the code is, not what wraps it. `x` is visual and
 -- `o` is what an operator waits for, so one mapping serves both `vaf` and
 -- `daf`. `a` takes the whole thing, `i` only its insides.
+-- The query captures both the definition and the `decorated_definition` that
+-- wraps it, and the smallest match at the cursor wins, so `af`/`ac` stop below
+-- the decorators. Grow the selection back up over them.
+local function include_decorators()
+	if not vim.fn.mode():match("^[vV\22]") then
+		return
+	end
+
+	local srow, scol = vim.fn.line("v") - 1, vim.fn.col("v") - 1
+	local node = vim.treesitter.get_node({ pos = { srow, scol } })
+
+	while node do
+		local nrow, ncol = node:start()
+		if nrow ~= srow or ncol ~= scol then
+			return
+		end
+
+		local parent = node:parent()
+		if parent and parent:type() == "decorated_definition" then
+			local drow, dcol = parent:start()
+			vim.cmd("normal! o")
+			vim.api.nvim_win_set_cursor(0, { drow + 1, dcol })
+			return vim.cmd("normal! o")
+		end
+
+		node = parent
+	end
+end
+
 for lhs, object in pairs({
 	["af"] = { "@function.outer", "Function" },
 	["if"] = { "@function.inner", "Function body" },
@@ -114,6 +143,10 @@ for lhs, object in pairs({
 }) do
 	map({ "x", "o" }, lhs, function()
 		require("nvim-treesitter-textobjects.select").select_textobject(object[1], "textobjects")
+
+		if object[1] == "@function.outer" or object[1] == "@class.outer" then
+			include_decorators()
+		end
 	end, { desc = object[2] })
 end
 

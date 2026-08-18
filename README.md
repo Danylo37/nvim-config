@@ -188,8 +188,8 @@ whole thing, `i` only its insides.
 
 | Key | Action |
 |---|---|
-| `af` / `if` | Function, with its signature / its body only |
-| `ac` / `ic` | Class / class body |
+| `af` / `if` | Function, with its signature and decorators / its body only |
+| `ac` / `ic` | Class, with its decorators / class body |
 | `aa` / `ia` | Argument, with its comma / the argument itself |
 | `]f` / `[f` | Jump to the next / previous function |
 | `]c` / `[c` | Jump to the next / previous class (in a diff window, the next change, as usual) |
