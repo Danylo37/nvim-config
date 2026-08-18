@@ -161,7 +161,7 @@ spell/
 | `snacks.words` | highlights every LSP reference to the word under the cursor, walked with `[r` / `]r` |
 | `snacks.bigfile` | turns treesitter, LSP, folds and completion off past 1.5MB or 1000-character lines |
 | `snacks.quickfile` | draws `nvim file.py` before the plugins load instead of after |
-| `persistence.nvim` | one session per directory and git branch, restored on demand (`<leader>q`) |
+| `persistence.nvim` | one session per project directory and git branch, restored on demand (`<leader>q`) |
 | `toggleterm.nvim` | built-in terminal |
 | `overseer.nvim` | task runner: make/npm/cargo/shell tasks with a status list |
 | `snacks.terminal` | opens the `lazydocker` and `lazysql` TUIs in a float |
@@ -307,12 +307,23 @@ project's own `load_dotenv()`, which does not override what is already set.
 persistence.nvim writes a session per directory (and per git branch) when Neovim exits.
 Nothing is restored on its own: `s` on the dashboard, or `<leader>qs` from anywhere.
 
+Only directories with a project marker get a session. Started anywhere else — `$HOME`
+above all — the session would be keyed by a directory that means nothing, and every file
+ever opened from there would pile into it.
+
 | Key | Action |
 |---|---|
 | `<leader>qs` | Restore the session for this directory |
-| `<leader>ql` | Restore the last session, whatever directory it was |
+| `<leader>ql` | Restore the session closed most recently |
 | `<leader>qS` | Pick a session from the list |
 | `<leader>qd` | Do not save this session on exit |
+| `<leader>qD` | Delete this directory's session |
+
+`<leader>ql` orders sessions by when they were **written**, which is when Neovim quit. Two
+windows open at once and the one you closed last is the "last" one, whichever you started
+first. `<leader>qS` lists them by directory instead, which is the one to reach for when in
+doubt. The files themselves are plain `:mksession` scripts in
+`~/.local/state/nvim/sessions/`.
 
 ### `<leader>m` — Multicursor
 | Key | Action |

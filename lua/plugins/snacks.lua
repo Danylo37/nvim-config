@@ -136,7 +136,12 @@ return {
 
 			-- Highlights every LSP reference to the word under the cursor;
 			-- ]r / [r walk them (config/keymaps.lua).
-			words = { enabled = true },
+			--
+			-- The debounce is a single-shot timer restarted on every cursor
+			-- move, so it only costs one `textDocument/documentHighlight` once
+			-- the cursor stops. Holding `j` still sends nothing; the default
+			-- 200ms only made the highlight visibly lag behind the cursor.
+			words = { enabled = true, debounce = 50 },
 
 			-- Opens the lazygit binary in a float, themed from the colorscheme.
 			lazygit = { enabled = true },
@@ -203,7 +208,7 @@ return {
 							end,
 						},
 						{
-							icon = " ",
+							icon = " ",
 							key = "s",
 							desc = "Restore Session",
 							action = function()

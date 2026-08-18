@@ -390,9 +390,11 @@ map("n", "<leader>qs", function()
 	require("persistence").load()
 end, { desc = "Restore session for this directory" })
 
+-- Sessions are ordered by when they were written, which is when Neovim quit,
+-- not when it started. Two windows open at once means the one closed last wins.
 map("n", "<leader>ql", function()
 	require("persistence").load({ last = true })
-end, { desc = "Restore last session" })
+end, { desc = "Restore the session closed most recently" })
 
 map("n", "<leader>qS", function()
 	require("persistence").select()
@@ -402,6 +404,23 @@ end, { desc = "Pick a session" })
 map("n", "<leader>qd", function()
 	require("persistence").stop()
 end, { desc = "Do not save this session" })
+
+-- persistence has no delete of its own, and a session written from the wrong
+-- directory sticks around forever otherwise. `stop` so the exit does not
+-- write it straight back.
+map("n", "<leader>qD", function()
+	local persistence = require("persistence")
+	local file = persistence.current()
+
+	if vim.fn.filereadable(file) == 0 then
+		vim.notify("No saved session for " .. vim.fn.getcwd(), vim.log.levels.WARN)
+		return
+	end
+
+	vim.fn.delete(file)
+	persistence.stop()
+	vim.notify("Deleted the session for " .. vim.fn.getcwd())
+end, { desc = "Delete this directory's session" })
 
 -- ------------------------------------------------------------- terminal ----
 
