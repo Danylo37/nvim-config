@@ -52,7 +52,7 @@ progress indicator in the corner to disappear. From there:
 
 The dashboard opens by itself when you launch Neovim without a file — it also lists
 its hotkeys: `f` files, `n` new file, `p` projects, `g` grep, `r` recent files,
-`c` config, `L` Lazy, `M` Mason, `q` quit.
+`s` restore session, `c` config, `L` Lazy, `M` Mason, `q` quit.
 
 ## Structure
 
@@ -67,14 +67,14 @@ lua/config/
 lua/plugins/                -- one file per plugin theme
   lsp.lua                   -- mason, lspconfig, lspsaga, trouble
   completion.lua            -- nvim-cmp, LuaSnip, autopairs
-  editor.lua                -- treesitter (+textobjects), flash, multicursor, harpoon, grug-far, conform, surround, comment, todo-comments, dirtytalk
+  editor.lua                -- treesitter (+textobjects), flash, multicursor, harpoon, grug-far, conform, surround, comment, todo-comments, dirtytalk, persistence
   files.lua                 -- neo-tree
   git.lua                   -- gitsigns
   lang.lua                  -- venv-selector, jupytext, render-markdown
   ai.lua                    -- windsurf, copilot, claudecode
   debug.lua                 -- nvim-dap, dap-ui, dap-python
   terminal.lua              -- toggleterm, overseer
-  snacks.lua                -- dashboard, picker, input, image, lazygit
+  snacks.lua                -- dashboard, picker, input, image, lazygit, words, bigfile
   ui.lua                    -- theme, statusline, tabs, which-key, notifications, etc.
 
 lua/util/
@@ -158,6 +158,10 @@ spell/
 | `nvim-scrollbar` + `nvim-hlslens` | scrollbar with git/diagnostic/search marks, plus a match counter while searching |
 | `snacks.input` | floating replacement for `vim.ui.input` prompts |
 | `snacks.image` | inline image previews in the buffer and in the picker |
+| `snacks.words` | highlights every LSP reference to the word under the cursor, walked with `[r` / `]r` |
+| `snacks.bigfile` | turns treesitter, LSP, folds and completion off past 1.5MB or 1000-character lines |
+| `snacks.quickfile` | draws `nvim file.py` before the plugins load instead of after |
+| `persistence.nvim` | one session per directory and git branch, restored on demand (`<leader>q`) |
 | `toggleterm.nvim` | built-in terminal |
 | `overseer.nvim` | task runner: make/npm/cargo/shell tasks with a status list |
 | `snacks.terminal` | opens the `lazydocker` and `lazysql` TUIs in a float |
@@ -241,6 +245,7 @@ whole thing, `i` only its insides.
 | `<leader>rn` | Rename symbol |
 | `<leader>rN` | Rename symbol (project-wide) |
 | `<leader>ru` | Undo the last LSP edit across all files |
+| `[r` / `]r` | Previous / next reference to the word under the cursor |
 
 ### `<leader>x` — Diagnostics
 | Key | Action |
@@ -297,6 +302,17 @@ project's own `load_dotenv()`, which does not override what is already set.
 | `<leader>hd` | Remove file |
 | `<C-e>` | Toggle Harpoon menu |
 | `<leader>1..6` | Go to file by number |
+
+### `<leader>q` — Session
+persistence.nvim writes a session per directory (and per git branch) when Neovim exits.
+Nothing is restored on its own: `s` on the dashboard, or `<leader>qs` from anywhere.
+
+| Key | Action |
+|---|---|
+| `<leader>qs` | Restore the session for this directory |
+| `<leader>ql` | Restore the last session, whatever directory it was |
+| `<leader>qS` | Pick a session from the list |
+| `<leader>qd` | Do not save this session on exit |
 
 ### `<leader>m` — Multicursor
 | Key | Action |

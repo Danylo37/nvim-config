@@ -189,6 +189,16 @@ return {
 	},
 
 	{
+		-- One session per cwd (and per git branch), written on exit and
+		-- restored on demand. Nothing is loaded automatically: starting on the
+		-- dashboard and choosing is the point, otherwise every `nvim` in a
+		-- project reopens yesterday's ten buffers.
+		"folke/persistence.nvim",
+		event = "BufReadPre",
+		opts = {},
+	},
+
+	{
 		"ThePrimeagen/harpoon",
 		branch = "harpoon2",
 		dependencies = { "nvim-lua/plenary.nvim" },

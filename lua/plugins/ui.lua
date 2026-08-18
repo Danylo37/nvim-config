@@ -80,6 +80,7 @@ return {
 				{ "<leader>h", group = "Harpoon" },
 				{ "<leader>m", group = "Multicursor" },
 				{ "<leader>o", group = "Overseer / Tasks" },
+				{ "<leader>q", group = "Session" },
 				{ "<leader>r", group = "Refactor" },
 				{ "<leader>s", group = "Search & Replace" },
 				{ "<leader>t", group = "Terminal" },

@@ -17,7 +17,7 @@
 --   <leader>g  Git               <leader>x  Diagnostics
 --   <leader>h  Harpoon           <leader>m  Multicursor
 --   <leader>r  Refactor          <leader>o  Overseer / tasks
---   <leader>w  Windows
+--   <leader>w  Windows           <leader>q  Session
 
 local map = vim.keymap.set
 local util = require("util")
@@ -217,6 +217,16 @@ map("n", "<leader>ru", function()
 	require("util.lsp_undo").undo()
 end, { desc = "Undo last LSP edit in all files" })
 
+-- snacks.words highlights every reference to the word under the cursor; these
+-- walk them without leaving the buffer, which is the cheap version of `gr`.
+map("n", "]r", function()
+	require("snacks").words.jump(vim.v.count1, true)
+end, { desc = "Next reference" })
+
+map("n", "[r", function()
+	require("snacks").words.jump(-vim.v.count1, true)
+end, { desc = "Previous reference" })
+
 -- ------------------------------------------------------------ diagnostics ---
 
 map("n", "de", "<cmd>Lspsaga show_line_diagnostics<CR>", { desc = "Line diagnostics" })
@@ -371,6 +381,27 @@ for i = 1, 6 do
 		require("harpoon"):list():select(i)
 	end, { desc = "Harpoon: go to file " .. i })
 end
+
+-- ---------------------------------------------------------------- session ---
+
+-- persistence.nvim writes a session per cwd and git branch on exit; nothing
+-- reads one back on its own. The dashboard's `s` is the same as <leader>qs.
+map("n", "<leader>qs", function()
+	require("persistence").load()
+end, { desc = "Restore session for this directory" })
+
+map("n", "<leader>ql", function()
+	require("persistence").load({ last = true })
+end, { desc = "Restore last session" })
+
+map("n", "<leader>qS", function()
+	require("persistence").select()
+end, { desc = "Pick a session" })
+
+-- Only for this session: whatever is on disk stays as it was.
+map("n", "<leader>qd", function()
+	require("persistence").stop()
+end, { desc = "Do not save this session" })
 
 -- ------------------------------------------------------------- terminal ----
 

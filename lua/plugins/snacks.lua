@@ -124,6 +124,20 @@ return {
 			input = { enabled = true },
 			image = { enabled = true },
 
+			-- Strips the expensive per-buffer machinery (treesitter, LSP,
+			-- folds, completion) off anything over 1.5MB or with 1000-character
+			-- lines, so opening a minified bundle or a log dump does not hang.
+			bigfile = { enabled = true },
+
+			-- `nvim file.py` draws the file before the plugins load instead of
+			-- after, which is the difference between an instant window and a
+			-- blank one.
+			quickfile = { enabled = true },
+
+			-- Highlights every LSP reference to the word under the cursor;
+			-- ]r / [r walk them (config/keymaps.lua).
+			words = { enabled = true },
+
 			-- Opens the lazygit binary in a float, themed from the colorscheme.
 			lazygit = { enabled = true },
 
@@ -186,6 +200,14 @@ return {
 							desc = "Recent Files",
 							action = function()
 								Snacks.picker.recent()
+							end,
+						},
+						{
+							icon = " ",
+							key = "s",
+							desc = "Restore Session",
+							action = function()
+								require("persistence").load()
 							end,
 						},
 						{
