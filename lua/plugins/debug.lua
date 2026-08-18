@@ -30,6 +30,32 @@ return {
 					require("dap-python").setup(vim.fn.stdpath("data") .. "/mason/packages/debugpy/venv/bin/python")
 
 					require("dap-python").test_runner = "pytest"
+
+					-- dap-python pushes every line of `./.env` into the
+					-- debuggee's environment, with a parser that does not
+					-- expand `${VAR}`. A file written for python-dotenv
+					-- therefore arrives literal, and `load_dotenv()` will not
+					-- overwrite what is already set, so the project ends up
+					-- connecting as the user `${POSTGRES_USER}`. Projects load
+					-- their own `.env`; pointing this at an empty file is the
+					-- only way to opt out.
+					local dap = require("dap")
+					local python = dap.adapters.python
+
+					dap.adapters.python = function(cb, config, parent)
+						python(function(adapter)
+							local enrich = adapter.enrich_config
+
+							adapter.enrich_config = function(conf, on_config)
+								conf.envFile = "/dev/null"
+								enrich(conf, on_config)
+							end
+
+							cb(adapter)
+						end, config, parent)
+					end
+
+					dap.adapters.debugpy = dap.adapters.python
 				end,
 			},
 		},
@@ -42,8 +68,10 @@ return {
 			vim.fn.sign_define("DapLogPoint", { text = "◆", texthl = "DiagnosticSignInfo" })
 			vim.fn.sign_define("DapStopped", { text = "▶", texthl = "DiagnosticSignOk", linehl = "Visual" })
 
-			-- The panels follow the session: up when it starts, down when it is
-			-- over, so there is nothing to toggle by hand in the common case.
+			-- The panels open with the session but deliberately stay up after it
+			-- ends: closing them on `terminated` wiped the console before the
+			-- traceback of a test that failed on the way in could be read.
+			-- <leader>du puts them away.
 			local dapui = require("dapui")
 
 			dap.listeners.before.attach.dapui = function()
@@ -52,14 +80,6 @@ return {
 
 			dap.listeners.before.launch.dapui = function()
 				dapui.open()
-			end
-
-			dap.listeners.before.event_terminated.dapui = function()
-				dapui.close()
-			end
-
-			dap.listeners.before.event_exited.dapui = function()
-				dapui.close()
 			end
 		end,
 	},

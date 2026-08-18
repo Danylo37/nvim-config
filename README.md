@@ -255,8 +255,13 @@ whole thing, `i` only its insides.
 | `[t` / `]t` | Previous / next TODO comment |
 
 ### `<leader>d` — Debug
-The panels open when a session starts and close when it ends, so a run is `<leader>db` to
-mark the line, `<leader>dc` to get there.
+The panels open when a session starts, so a run is `<leader>db` to mark the line,
+`<leader>dc` to get there. They stay up afterwards, because a test that dies during fixture
+setup leaves its traceback in the console and nothing else; `<leader>du` puts them away.
+
+A `.env` in the project root is **not** pushed into the debuggee. dap-python does that by
+default with a parser that leaves `${VAR}` unexpanded, and the literal then wins over the
+project's own `load_dotenv()`, which does not override what is already set.
 
 | Key | Action |
 |---|---|
