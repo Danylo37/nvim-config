@@ -74,7 +74,7 @@ lua/plugins/                -- one file per plugin theme
   ai.lua                    -- windsurf, copilot, claudecode
   debug.lua                 -- nvim-dap, dap-ui, dap-python
   terminal.lua              -- toggleterm, overseer
-  snacks.lua                -- dashboard, picker, input, image, lazygit, words, bigfile
+  snacks.lua                -- dashboard, picker, input, image, lazygit, words, bigfile, quickfile
   ui.lua                    -- theme, statusline, tabs, which-key, notifications, etc.
 
 lua/util/
@@ -314,9 +314,11 @@ current window, `d` diffs it, `r` reblames from it and `R` from its parent. `:q`
 persistence.nvim writes a session per directory (and per git branch) when Neovim exits.
 Nothing is restored on its own: `s` on the dashboard, or `<leader>qs` from anywhere.
 
-Only directories with a project marker get a session. Started anywhere else — `$HOME`
-above all — the session would be keyed by a directory that means nothing, and every file
-ever opened from there would pile into it.
+Only directories with a project marker (`util.find_root`, `lua/util/init.lua`) get a
+session. Started anywhere else the session would be keyed by a directory that means
+nothing, and every file ever opened from there would pile into it. `$HOME` never counts,
+whatever it happens to contain: one `npm install` in the wrong terminal leaves a
+`package.json` there and would otherwise turn all of home into one project.
 
 | Key | Action |
 |---|---|
@@ -324,7 +326,7 @@ ever opened from there would pile into it.
 | `<leader>ql` | Restore the session closed most recently |
 | `<leader>qS` | Pick a session from the list |
 | `<leader>qd` | Do not save this session on exit |
-| `<leader>qD` | Delete this directory's session |
+| `<leader>qD` | Delete this directory's session (and stop saving for the rest of the run) |
 
 `<leader>ql` orders sessions by when they were **written**, which is when Neovim quit. Two
 windows open at once and the one you closed last is the "last" one, whichever you started

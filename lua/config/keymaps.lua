@@ -257,8 +257,9 @@ end, { desc = "Previous TODO comment" })
 
 -- -------------------------------------------------------------------- dap ---
 
--- The panels open and close with the session (lua/plugins/debug.lua), so a run
--- is <leader>db to mark the line and <leader>dc to get there.
+-- The panels open with the session and stay up after it (lua/plugins/debug.lua),
+-- so a run is <leader>db to mark the line and <leader>dc to get there;
+-- <leader>du puts them away.
 map("n", "<leader>db", function()
 	require("dap").toggle_breakpoint()
 end, { desc = "Toggle breakpoint" })
@@ -594,7 +595,7 @@ end, { desc = "Choose theme" })
 map("n", "<leader>uc", "<cmd>ColorizerToggle<CR>", { desc = "Toggle colorizer" })
 
 map("n", "<leader>us", function()
-	vim.opt_local.spell = not vim.opt_local.spell:get()
+	vim.wo.spell = not vim.wo.spell
 	vim.notify("Spell " .. (vim.wo.spell and "on" or "off"))
 end, { desc = "Toggle spell check" })
 
