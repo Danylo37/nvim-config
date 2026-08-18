@@ -349,6 +349,17 @@ map("n", "<leader>gs", "<cmd>Gitsigns stage_hunk<CR>", { desc = "Stage hunk" })
 map("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<CR>", { desc = "Reset hunk" })
 map("n", "<leader>gp", "<cmd>Gitsigns preview_hunk<CR>", { desc = "Preview hunk" })
 
+-- The scroll-bound split JetBrains calls Annotate: a commit against every line,
+-- following the buffer as it scrolls. <CR> inside it opens a menu to show that
+-- commit or reblame from it.
+map("n", "<leader>gb", "<cmd>Gitsigns blame<CR>", { desc = "Blame the file (side split)" })
+
+-- One line instead of all of them, but the whole commit: message, author, and
+-- the diff of the hunk it touched.
+map("n", "<leader>gB", function()
+	require("gitsigns").blame_line({ full = true })
+end, { desc = "Blame the current line (full)" })
+
 map("n", "<leader>gg", function()
 	require("snacks").lazygit({ cwd = util.root() })
 end, { desc = "Lazygit" })

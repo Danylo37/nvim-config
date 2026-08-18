@@ -291,9 +291,16 @@ project's own `load_dotenv()`, which does not override what is already set.
 | `<leader>gs` | Stage hunk |
 | `<leader>gr` | Reset hunk |
 | `<leader>gp` | Preview hunk |
+| `<leader>gb` | Blame the whole file in a scroll-bound side split |
+| `<leader>gB` | Blame the current line, with the full commit and its diff |
 | `<leader>gg` | Lazygit (project root) |
 | `<leader>gl` | Lazygit log |
 | `<leader>gf` | Lazygit history for the current file |
+
+`<leader>gb` is the annotation column JetBrains puts next to the gutter: a commit per line,
+scrolling with the file. Inside the split, on the line you care about: `<CR>` opens a menu
+with everything below, `s` shows that commit in a vertical split, `S` in a tab, `e` in the
+current window, `d` diffs it, `r` reblames from it and `R` from its parent. `:q` closes.
 
 ### `<leader>h` — Harpoon
 | Key | Action |
