@@ -250,8 +250,8 @@ whole thing, `i` only its insides.
 ### `<leader>x` — Diagnostics
 | Key | Action |
 |---|---|
-| `de` | Line diagnostics |
-| `[d` / `]d` | Previous / next diagnostic |
+| `[d` / `]d` | Previous / next diagnostic, message in a float on arrival |
+| `<leader>xe` | The message for the current line, without moving |
 | `<leader>xx` | All diagnostics (Trouble) |
 | `<leader>xw` | Buffer diagnostics |
 | `<leader>xr` / `<leader>xd` | References / Definitions (Trouble) |

@@ -229,8 +229,8 @@ end, { desc = "Previous reference" })
 
 -- ------------------------------------------------------------ diagnostics ---
 
-map("n", "de", "<cmd>Lspsaga show_line_diagnostics<CR>", { desc = "Line diagnostics" })
-
+-- `float = true`, so walking the diagnostics already shows each message; the
+-- one below is for reading the message on the line you are already on.
 map("n", "[d", function()
 	vim.diagnostic.jump({ count = -1, float = true })
 end, { desc = "Previous diagnostic" })
@@ -238,6 +238,10 @@ end, { desc = "Previous diagnostic" })
 map("n", "]d", function()
 	vim.diagnostic.jump({ count = 1, float = true })
 end, { desc = "Next diagnostic" })
+
+-- Was `de`, which is Vim's own "delete to end of word" and stopped working
+-- because of it.
+map("n", "<leader>xe", "<cmd>Lspsaga show_line_diagnostics<CR>", { desc = "Line diagnostics" })
 
 map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<CR>", { desc = "All diagnostics" })
 map("n", "<leader>xw", "<cmd>Trouble diagnostics toggle filter.buf=0<CR>", { desc = "Buffer diagnostics" })
