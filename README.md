@@ -52,7 +52,7 @@ progress indicator in the corner to disappear. From there:
 
 The dashboard opens by itself when you launch Neovim without a file — it also lists
 its hotkeys: `f` files, `n` new file, `p` projects, `g` grep, `r` recent files,
-`s` restore session, `c` config, `L` Lazy, `M` Mason, `q` quit.
+`c` config, `L` Lazy, `M` Mason, `q` quit.
 
 ## Structure
 
@@ -67,7 +67,7 @@ lua/config/
 lua/plugins/                -- one file per plugin theme
   lsp.lua                   -- mason, lspconfig, lspsaga, trouble
   completion.lua            -- nvim-cmp, LuaSnip, autopairs
-  editor.lua                -- treesitter (+textobjects), flash, multicursor, harpoon, grug-far, conform, surround, comment, todo-comments, dirtytalk, persistence
+  editor.lua                -- treesitter (+textobjects), flash, multicursor, harpoon, grug-far, conform, surround, comment, todo-comments, dirtytalk
   files.lua                 -- neo-tree
   git.lua                   -- gitsigns
   lang.lua                  -- venv-selector, jupytext, render-markdown
@@ -161,7 +161,6 @@ spell/
 | `snacks.words` | highlights every LSP reference to the word under the cursor, walked with `[r` / `]r` |
 | `snacks.bigfile` | turns treesitter, LSP, folds and completion off past 1.5MB or 1000-character lines |
 | `snacks.quickfile` | draws `nvim file.py` before the plugins load instead of after |
-| `persistence.nvim` | one session per project directory and git branch, restored on demand (`<leader>q`) |
 | `toggleterm.nvim` | built-in terminal |
 | `overseer.nvim` | task runner: make/npm/cargo/shell tasks with a status list |
 | `snacks.terminal` | opens the `lazydocker` and `lazysql` TUIs in a float |
@@ -309,30 +308,6 @@ current window, `d` diffs it, `r` reblames from it and `R` from its parent. `:q`
 | `<leader>hd` | Remove file |
 | `<C-e>` | Toggle Harpoon menu |
 | `<leader>1..6` | Go to file by number |
-
-### `<leader>q` — Session
-persistence.nvim writes a session per directory (and per git branch) when Neovim exits.
-Nothing is restored on its own: `s` on the dashboard, or `<leader>qs` from anywhere.
-
-Only directories with a project marker (`util.find_root`, `lua/util/init.lua`) get a
-session. Started anywhere else the session would be keyed by a directory that means
-nothing, and every file ever opened from there would pile into it. `$HOME` never counts,
-whatever it happens to contain: one `npm install` in the wrong terminal leaves a
-`package.json` there and would otherwise turn all of home into one project.
-
-| Key | Action |
-|---|---|
-| `<leader>qs` | Restore the session for this directory |
-| `<leader>ql` | Restore the session closed most recently |
-| `<leader>qS` | Pick a session from the list |
-| `<leader>qd` | Do not save this session on exit |
-| `<leader>qD` | Delete this directory's session (and stop saving for the rest of the run) |
-
-`<leader>ql` orders sessions by when they were **written**, which is when Neovim quit. Two
-windows open at once and the one you closed last is the "last" one, whichever you started
-first. `<leader>qS` lists them by directory instead, which is the one to reach for when in
-doubt. The files themselves are plain `:mksession` scripts in
-`~/.local/state/nvim/sessions/`.
 
 ### `<leader>m` — Multicursor
 | Key | Action |

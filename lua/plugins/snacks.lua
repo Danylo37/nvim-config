@@ -208,14 +208,6 @@ return {
 							end,
 						},
 						{
-							icon = " ",
-							key = "s",
-							desc = "Restore Session",
-							action = function()
-								require("persistence").load()
-							end,
-						},
-						{
 							icon = " ",
 							key = "c",
 							desc = "Config",

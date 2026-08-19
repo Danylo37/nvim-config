@@ -189,30 +189,6 @@ return {
 	},
 
 	{
-		-- One session per cwd (and per git branch), written on exit and
-		-- restored on demand. Nothing is loaded automatically: starting on the
-		-- dashboard and choosing is the point, otherwise every `nvim` in a
-		-- project reopens yesterday's ten buffers.
-		"folke/persistence.nvim",
-		event = "BufReadPre",
-		opts = {},
-		config = function(_, opts)
-			local persistence = require("persistence")
-
-			persistence.setup(opts)
-
-			-- Sessions are keyed by cwd, so a directory that is not a project
-			-- collects whatever happened to be opened from it. $HOME is the bad
-			-- case: launch `nvim` there once and every file you ever open from
-			-- home lands in a single session, which is then the one
-			-- <leader>ql keeps finding. No project root, no session.
-			if not require("util").find_root(vim.fn.getcwd()) then
-				persistence.stop()
-			end
-		end,
-	},
-
-	{
 		"ThePrimeagen/harpoon",
 		branch = "harpoon2",
 		dependencies = { "nvim-lua/plenary.nvim" },

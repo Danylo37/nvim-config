@@ -35,9 +35,8 @@ function M.find_root(path)
 
 	-- The stray package.json above is not hypothetical: one `npm install` in the
 	-- wrong terminal leaves one in $HOME, and every loose file then belongs to a
-	-- "project" rooted there — lazygit and the terminals open at $HOME, and
-	-- persistence keys a session to it. Nothing above $HOME is a project either,
-	-- so stop rather than skip.
+	-- "project" rooted there — lazygit and the terminals then open at $HOME.
+	-- Nothing above $HOME is a project either, so stop rather than skip.
 	local home = vim.fs.normalize(vim.uv.os_homedir() or "")
 
 	for dir in vim.fs.parents(start) do
