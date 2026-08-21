@@ -30,7 +30,16 @@ map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 -- and feed the search marks on the scrollbar. <Esc> above clears both.
 local function hlslens_jump(key)
 	return function()
-		vim.cmd("normal! " .. vim.v.count1 .. key)
+		-- A jump with no match left raises E486, and coming out of a Lua
+		-- callback it arrives as an E5108 traceback. The error line is the only
+		-- useful part of it.
+		local ok, err = pcall(vim.cmd, "normal! " .. vim.v.count1 .. key)
+
+		if not ok then
+			vim.notify(err:match("E%d+: .*") or err, vim.log.levels.ERROR)
+			return
+		end
+
 		require("hlslens").start()
 	end
 end
