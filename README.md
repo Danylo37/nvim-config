@@ -149,7 +149,7 @@ spell/
 |---|---|
 | `tokyonight.nvim` | color scheme |
 | `snacks.nvim` | dashboard with recent projects and recent files |
-| `lualine.nvim` | statusline |
+| `lualine.nvim` | statusline, including the `recording @q` indicator noice suppresses |
 | `bufferline.nvim` | buffer tabs |
 | `which-key.nvim` | shows hints for `<leader>` prefixes |
 | `indent-blankline.nvim` | indent guides |

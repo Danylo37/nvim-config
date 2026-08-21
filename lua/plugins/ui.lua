@@ -26,7 +26,35 @@ return {
 	{
 		"nvim-lualine/lualine.nvim",
 		config = function()
-			require("lualine").setup()
+			-- Neovim announces "recording @q" through `msg_showmode`, which
+			-- noice skips by default (and its `ext_messages` pins cmdheight to
+			-- 0, so there is no command line to print it on either). An
+			-- unnoticed macro is expensive: which-key, nvim-cmp and
+			-- nvim-autopairs all disable themselves while one is recording, so
+			-- it reads as "the config broke" rather than "a register is open".
+			local function macro()
+				local reg = vim.fn.reg_recording()
+				return reg ~= "" and ("recording @" .. reg) or ""
+			end
+
+			require("lualine").setup({
+				sections = {
+					lualine_x = {
+						{ macro, color = "DiagnosticWarn" },
+						"encoding",
+						"fileformat",
+						"filetype",
+					},
+				},
+			})
+
+			-- The default refresh events don't include these, and a `q` that
+			-- moves no cursor would otherwise sit unshown for up to a second.
+			vim.api.nvim_create_autocmd({ "RecordingEnter", "RecordingLeave" }, {
+				callback = function()
+					require("lualine").refresh()
+				end,
+			})
 		end,
 	},
 
